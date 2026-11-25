@@ -70,6 +70,26 @@ export function getConnectionStatus() {
   return connectionStatus
 }
 
+// ---- Concurrency limit ------------------------------------------------------
+// At most this many TMDB requests are in flight at once; the rest wait in a
+// queue. Matters for /cast, which compiles ~40 credits requests per batch.
+const MAX_CONCURRENT_REQUESTS = 6
+let activeRequests = 0
+const waitingQueue = []
+
+async function withRequestSlot(task) {
+  if (activeRequests >= MAX_CONCURRENT_REQUESTS) {
+    await new Promise((resolve) => waitingQueue.push(resolve))
+  }
+  activeRequests += 1
+  try {
+    return await task()
+  } finally {
+    activeRequests -= 1
+    waitingQueue.shift()?.()
+  }
+}
+
 async function fetchJson(url) {
   if (!READ_TOKEN) {
     setConnectionStatus('error')
@@ -78,12 +98,12 @@ async function fetchJson(url) {
 
   let response
   try {
-    response = await fetch(url, {
+    response = await withRequestSlot(() => fetch(url, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${READ_TOKEN}`,
       },
-    })
+    }))
   } catch {
     setConnectionStatus('error')
     throw new TmdbError('Network error: could not reach TMDB. Check your connection.')
@@ -216,6 +236,19 @@ export function getMediaDetails(mediaType, id, { append } = {}, options) {
     return Promise.reject(new TmdbError(`Unknown media type "${mediaType}".`, { status: 404 }))
   }
   return tmdbRequest(`/${mediaType}/${id}`, { append_to_response: append }, options)
+}
+
+/**
+ * Cast list for one production. Movies: /movie/{id}/credits (cast[].character).
+ * TV: /tv/{id}/aggregate_credits (cast[].roles[].character) because plain TV
+ * credits only cover the latest season (verified with Westworld).
+ */
+export function getCredits(mediaType, id, options) {
+  if (!MEDIA_TYPES.includes(mediaType)) {
+    return Promise.reject(new TmdbError(`Unknown media type "${mediaType}".`, { status: 404 }))
+  }
+  const path = mediaType === 'movie' ? `/movie/${id}/credits` : `/tv/${id}/aggregate_credits`
+  return tmdbRequest(path, {}, options)
 }
 
 /** GET /person/{id}. Fields used: name, profile_path, biography, known_for_department. */
