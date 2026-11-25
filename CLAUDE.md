@@ -116,7 +116,9 @@ Kurallar:
   - `/search/keyword` → tema keyword ID'lerini bulmak için
   - `/discover/movie`, `/discover/tv` → `with_keywords`, `with_genres`, yıl, `sort_by`, `page`
   - `/search/movie`, `/search/tv`, `/search/person`
-  - `/movie/{id}`, `/tv/{id}` → `append_to_response` ile credits, keywords, similar, videos
+  - `/movie/{id}`, `/tv/{id}` → `append_to_response` ile credits, keywords, recommendations, videos
+    (doğrulandı: `similar` alakasız sonuç veriyor, yerine `recommendations` kullanılır;
+    dizilerde `credits` sadece son sezonu kapsar → `aggregate_credits` kullanılır)
     (dizilerde `aggregate_credits` olabilir; doğrula)
   - `/person/{id}` → `combined_credits`
   - `/genre/movie/list`, `/genre/tv/list`
@@ -206,7 +208,7 @@ yapımları kaçırabilir (eksik etiketleme). Bu yüzden:
 - Backdrop hero, poster, başlık, tagline, yıl, süre/sezon, türler, puan, overview
 - Cast (oyuncu → `/person/:id` linki), varsa fragman
 - **Bu yapımla ilişkili dossier'ler** (katalogda varsa) → `/entity/:slug`
-- Benzer yapımlar (TMDB)
+- Benzer yapımlar (TMDB `recommendations`)
 - `type` sadece `movie` veya `tv` olabilir; geçersizse 404 durumu
 
 ### `/entity/:slug` Classified Dossier
