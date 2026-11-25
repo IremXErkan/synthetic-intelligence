@@ -1,115 +1,63 @@
-import { useCallback } from 'react'
-import { discoverTheme } from '../services/tmdb.js'
-import useFetch from '../hooks/useFetch.js'
-import { imageUrl, IMAGE_SIZES } from '../utils/imageUrl.js'
-import PageShell from '../components/layout/PageShell.jsx'
-import SectionHeader from '../components/common/SectionHeader.jsx'
-import ErrorState from '../components/common/ErrorState.jsx'
-import EmptyState from '../components/common/EmptyState.jsx'
+import { useState } from 'react'
+import { ENTITIES } from '../data/entities.js'
 import HudPanel from '../components/common/HudPanel.jsx'
-import HudRings from '../components/common/HudRings.jsx'
-import HatchedBar from '../components/common/HatchedBar.jsx'
-import TintedImage from '../components/common/TintedImage.jsx'
-import { DataList, DataRow } from '../components/common/DataRow.jsx'
-import { SkeletonGrid } from '../components/common/Skeleton.jsx'
-import { Badge, ThreatBadge } from '../components/common/Badge.jsx'
-import { SCORE_CRITERIA, THREAT_LEVELS, getEntityBySlug } from '../data/entities.js'
+import HeroEntity from '../components/home/HeroEntity.jsx'
+import LatestFeed from '../components/home/LatestFeed.jsx'
+import QuickAccess from '../components/home/QuickAccess.jsx'
+import FeaturedDossiers from '../components/home/FeaturedDossiers.jsx'
+import ArchiveSearch from '../components/home/ArchiveSearch.jsx'
 
-// TEMPORARY (day 2): building-block preview with live TMDB data.
-// Replaced by the Command Center dashboard on day 3 morning.
-
-function ThemePreview() {
-  const fetcher = useCallback((signal) => discoverTheme('movie', {}, { signal }), [])
-  const { data, error, loading, retry } = useFetch(fetcher)
-
-  if (loading) return <SkeletonGrid count={5} label="Loading archive" />
-  if (error) return <ErrorState error={error} onRetry={retry} />
-  if (!data?.results?.length) return <EmptyState />
-
-  const movies = data.results.slice(0, 5)
-  const first = movies[0]
-
-  return (
-    <>
-      <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        {movies.map((movie) => (
-          <li key={movie.id} className="group">
-            <HudPanel variant="data" glow cut={12} bodyClassName="p-0">
-              <TintedImage src={imageUrl(movie.poster_path, IMAGE_SIZES.posterCard)} alt={`${movie.title} poster`} />
-              <div className="border-t border-line p-3">
-                <p className="truncate text-sm font-medium text-ink">{movie.title}</p>
-                <p className="mt-1 font-mono text-xs text-ink-muted">
-                  {movie.release_date?.slice(0, 4) || '—'} · ★ {movie.vote_average.toFixed(1)} · TMDB #{movie.id}
-                </p>
-              </div>
-            </HudPanel>
-          </li>
-        ))}
-      </ul>
-
-      <HudPanel variant="data" title="TMDB record" className="mt-10 max-w-2xl">
-        <DataList>
-          <DataRow label="Title" value={first.title} />
-          <DataRow label="Release date" value={first.release_date} />
-          <DataRow label="Rating" value={`${first.vote_average.toFixed(1)} / 10 (${first.vote_count.toLocaleString('en-US')} votes)`} />
-          <DataRow label="TMDB ID" value={`#${first.id}`} />
-        </DataList>
-      </HudPanel>
-    </>
-  )
+function randomIndex(exclude) {
+  if (ENTITIES.length < 2) return 0
+  let next = exclude
+  while (next === exclude) next = Math.floor(Math.random() * ENTITIES.length)
+  return next
 }
 
+/** Command Center: the dashboard landing page. */
 function HomePage() {
-  const hal = getEntityBySlug('hal-9000')
+  // A different featured entity on every visit; "Scan another" picks a new one.
+  const [heroIndex, setHeroIndex] = useState(() => randomIndex(-1))
 
   return (
-    <PageShell
-      code="SEC-00"
-      eyebrow="Fictional AI & Robotics Archive"
-      title="Synthetic Intelligence"
-      description="Building-block preview. The Command Center dashboard replaces this page next."
-    >
-      <section>
-        <SectionHeader eyebrow="Live · TMDB" title="HUD cards + tinted images" />
-        <ThemePreview />
-      </section>
+    <div className="relative">
+      <div aria-hidden="true" className="bg-grid pointer-events-none absolute inset-x-0 top-0 h-[36rem] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
 
-      <section className="mt-14 grid gap-8 lg:grid-cols-[1fr_320px]">
-        <HudPanel variant="editorial" title="Archive analysis · HAL 9000" brackets bodyClassName="p-6">
-          <div className="space-y-3">
-            {SCORE_CRITERIA.map((criterion) => (
-              <HatchedBar key={criterion.key} label={criterion.label} value={hal.scores[criterion.key]} />
-            ))}
+      <div className="relative mx-auto max-w-7xl space-y-12 px-4 py-10 sm:px-6 sm:py-14">
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr_1.15fr_1fr]">
+          {/* Intro + search */}
+          <HudPanel variant="data" title="Command center" titleAs="p" brackets bodyClassName="p-6 sm:p-7">
+            <p className="label-mono text-ink-muted">
+              SEC-00 <span aria-hidden="true">//</span> Fictional AI &amp; Robotics Archive
+            </p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-ink sm:text-4xl">Synthetic Intelligence</h1>
+            <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+              Cinema has imagined thinking machines for a century: loyal companions, cold supercomputers, androids
+              that want to be human and networks that decide we are the threat. This archive collects them.
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+              Films, series and cast are pulled <span className="text-signal">live from TMDB</span>. The dossiers add
+              an <span className="text-pulse">editorial analysis</span> layer: classification, capabilities and
+              threat assessment.
+            </p>
+            <div className="mt-6 border-t border-line pt-5">
+              <ArchiveSearch />
+            </div>
+          </HudPanel>
+
+          {/* Featured entity */}
+          <div className="lg:pt-2">
+            <HeroEntity entity={ENTITIES[heroIndex]} onShuffle={() => setHeroIndex((i) => randomIndex(i))} />
           </div>
-          <DataList className="mt-6 border-t border-line pt-4">
-            <DataRow label="Classification" value={hal.entityType} variant="editorial" />
-            <DataRow label="Threat" value={<ThreatBadge level={hal.threatLevel} />} variant="editorial" />
-          </DataList>
-          <p className="mt-4 text-xs text-ink-muted">Scores are the project&apos;s subjective editorial assessment.</p>
-        </HudPanel>
 
-        <div className="relative mx-auto grid aspect-square w-full max-w-80 place-items-center">
-          <HudRings className="absolute inset-0 size-full" />
-          <p className="label-mono text-center text-signal">
-            HUD rings
-            <br />
-            <span className="text-ink-muted">decorative</span>
-          </p>
+          {/* Live feed */}
+          <LatestFeed />
         </div>
-      </section>
 
-      <section className="mt-14">
-        <SectionHeader eyebrow="Components" title="Badges" />
-        <div className="flex flex-wrap gap-3">
-          {THREAT_LEVELS.map((level) => (
-            <ThreatBadge key={level} level={level} />
-          ))}
-          <Badge tone="signal">In archive</Badge>
-          <Badge tone="pulse">Archive Analysis</Badge>
-          <Badge>Android</Badge>
-        </div>
-      </section>
-    </PageShell>
+        <QuickAccess />
+        <FeaturedDossiers />
+      </div>
+    </div>
   )
 }
 

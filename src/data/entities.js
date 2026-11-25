@@ -263,6 +263,12 @@ export const ENTITIES = [
   },
 ]
 
+/** Archive file code from catalog order, e.g. 'hal-9000' → 'SI-001'. */
+export function getEntityCode(slug) {
+  const index = ENTITIES.findIndex((entity) => entity.slug === slug)
+  return index === -1 ? null : `SI-${String(index + 1).padStart(3, '0')}`
+}
+
 /** Returns the entity with this slug, or undefined. */
 export function getEntityBySlug(slug) {
   return ENTITIES.find((entity) => entity.slug === slug)

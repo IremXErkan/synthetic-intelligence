@@ -172,3 +172,34 @@ export function discoverTheme(mediaType, { groups, includeLowVotes, sort = DEFAU
   }
   return tmdbRequest(`/discover/${mediaType}`, params, options)
 }
+
+// Release-date field names differ between movies and TV (verified).
+const RELEASE_FIELD = { movie: 'primary_release_date', tv: 'first_air_date' }
+
+/**
+ * Newest released theme titles: sorted by release date, never later than today
+ * (the vote threshold already drops most unreleased titles; this makes it explicit).
+ */
+export function discoverLatestTheme(mediaType, options) {
+  const field = RELEASE_FIELD[mediaType]
+  const today = new Date().toISOString().slice(0, 10)
+  return discoverTheme(mediaType, { sort: `${field}.desc`, filters: { [`${field}.lte`]: today } }, options)
+}
+
+export const MEDIA_TYPES = ['movie', 'tv']
+
+/**
+ * GET /movie/{id} or /tv/{id}. Basic fields used: title|name, release_date|first_air_date,
+ * poster_path, backdrop_path, overview, vote_average. `append` adds append_to_response.
+ */
+export function getMediaDetails(mediaType, id, { append } = {}, options) {
+  if (!MEDIA_TYPES.includes(mediaType)) {
+    return Promise.reject(new TmdbError(`Unknown media type "${mediaType}".`, { status: 404 }))
+  }
+  return tmdbRequest(`/${mediaType}/${id}`, { append_to_response: append }, options)
+}
+
+/** GET /person/{id}. Fields used: name, profile_path, biography, known_for_department. */
+export function getPerson(id, { append } = {}, options) {
+  return tmdbRequest(`/person/${id}`, { append_to_response: append }, options)
+}
