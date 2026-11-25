@@ -1,12 +1,15 @@
-import PageShell from '../components/layout/PageShell.jsx'
-import EmptyState from '../components/common/EmptyState.jsx'
+import MediaArchive from '../components/media/MediaArchive.jsx'
 
-// Placeholder route: The series archive is built on day 3.
 function SeriesPage() {
   return (
-    <PageShell code="SEC-02" eyebrow="Cinematic Archive" title="Series" description="Television series about synthetic intelligence, pulled live from TMDB.">
-      <EmptyState tab="Status: offline" title="Module not online yet" message="The series archive is built on day 3." />
-    </PageShell>
+    <MediaArchive
+      mediaType="tv"
+      code="SEC-02"
+      eyebrow="Cinematic Archive"
+      title="Series"
+      description="Television series about synthetic intelligence, pulled live from TMDB by theme keywords."
+      unitLabel="series"
+    />
   )
 }
 

@@ -3,6 +3,7 @@
 // Docs: https://developer.themoviedb.org/docs/getting-started
 
 import { DEFAULT_SORT, getThemeDiscoverParams } from '../config/themeKeywords.js'
+import { RELEASE_FIELD } from '../config/archiveFilters.js'
 
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const READ_TOKEN = import.meta.env.VITE_TMDB_READ_TOKEN
@@ -150,9 +151,18 @@ export function tmdbRequest(path, params = {}, { signal } = {}) {
 // Only endpoints whose responses have been checked against the live API are
 // added here. More are added as each one is verified.
 
-/** GET /discover/movie → { page, results[], total_pages, total_results } */
-export function discoverMovies(params = {}, options) {
-  return tmdbRequest('/discover/movie', { ...LIST_PARAMS, ...params }, options)
+// ---- Archive ID registry --------------------------------------------------
+// IDs seen in theme (discover) results during this session. Search results use
+// it for the "In archive" badge without extra requests. It only knows pages
+// that were actually loaded; the UI says so.
+const archiveIds = { movie: new Set(), tv: new Set() }
+
+function rememberArchiveIds(mediaType, data) {
+  data?.results?.forEach((item) => archiveIds[mediaType]?.add(item.id))
+}
+
+export function isInArchive(mediaType, id) {
+  return archiveIds[mediaType]?.has(id) ?? false
 }
 
 /**
@@ -170,11 +180,20 @@ export function discoverTheme(mediaType, { groups, includeLowVotes, sort = DEFAU
     page,
     ...filters,
   }
-  return tmdbRequest(`/discover/${mediaType}`, params, options)
+  const request = tmdbRequest(`/discover/${mediaType}`, params, options)
+  request.then((data) => rememberArchiveIds(mediaType, data)).catch(() => {})
+  return request
 }
 
-// Release-date field names differ between movies and TV (verified).
-const RELEASE_FIELD = { movie: 'primary_release_date', tv: 'first_air_date' }
+/** GET /search/{movie|tv} → same shape as discover (verified). Searches all of TMDB. */
+export function searchMedia(mediaType, query, { page = 1 } = {}, options) {
+  return tmdbRequest(`/search/${mediaType}`, { ...LIST_PARAMS, query, page }, options)
+}
+
+/** GET /genre/{movie|tv}/list → { genres: [{ id, name }] }. Movie and TV IDs differ. */
+export function getGenres(mediaType, options) {
+  return tmdbRequest(`/genre/${mediaType}/list`, {}, options)
+}
 
 /**
  * Newest released theme titles: sorted by release date, never later than today
