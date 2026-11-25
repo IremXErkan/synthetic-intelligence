@@ -1,10 +1,16 @@
-// Placeholder: methodology and TMDB attribution are added later.
+import PageShell from '../components/layout/PageShell.jsx'
+import EmptyState from '../components/common/EmptyState.jsx'
+
+// Placeholder: methodology and full TMDB attribution are written later.
 function AboutPage() {
   return (
-    <section className="mx-auto max-w-3xl">
-      <h1 className="text-3xl font-bold text-slate-100">About</h1>
-      <p className="mt-4 text-slate-400">Client-side route test page.</p>
-    </section>
+    <PageShell
+      eyebrow="Archive Protocol"
+      title="About"
+      description="What this archive is, where its data comes from and how the editorial analysis is made."
+    >
+      <EmptyState title="Document being drafted" message="The methodology page is written after the archive pages are built." />
+    </PageShell>
   )
 }
 
