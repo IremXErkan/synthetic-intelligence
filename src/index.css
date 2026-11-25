@@ -2,7 +2,7 @@
 
 /*
  * Design tokens. Contrast (WCAG) checked against void / panel / panel-raised:
- *   ink ≥ 14.7, ink-muted ≥ 5.95, signal ≥ 8.2, pulse ≥ 6.4, threat colors ≥ 6.3 → all AA.
+ *   ink ≥ 14.7, ink-muted ≥ 5.95, signal ≥ 9.7, pulse ≥ 6.4, threat colors ≥ 6.3 → all AA.
  *   `line` (≈1.3) is decorative only and is never used for text or as the only
  *   boundary of an input; inputs use `line-strong`.
  *
@@ -22,7 +22,7 @@
   --color-ink: #e6ecf5;
   --color-ink-muted: #8b97ad;
 
-  --color-signal: #38bdf8;
+  --color-signal: #22d3ee; /* cyan, per DESIGN.md */
   --color-pulse: #a78bfa;
 
   --color-threat-low: #4ade80;
@@ -59,9 +59,36 @@
 /* Faint blueprint grid used behind hero areas. Pure CSS, no image asset. */
 @utility bg-grid {
   background-image:
-    linear-gradient(to right, rgb(56 189 248 / 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(56 189 248 / 0.06) 1px, transparent 1px);
+    linear-gradient(to right, rgb(34 211 238 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(34 211 238 / 0.06) 1px, transparent 1px);
   background-size: 40px 40px;
+}
+
+/*
+ * Chamfered (cut-corner) shape: top-left and bottom-right corners cut by --cut.
+ * clip-path also clips borders and box-shadows, so HudPanel draws its border as
+ * an outer clipped layer and puts any glow (drop-shadow) on an unclipped parent.
+ */
+@utility chamfer {
+  --cut: 14px;
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+}
+
+/* Panel title tab: right edge slanted. */
+@utility chamfer-tab {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+}
+
+/* Diagonal hatching in the current text color (score bars). */
+@utility bg-hatched {
+  background-image: repeating-linear-gradient(135deg, currentColor 0 2px, transparent 2px 6px);
 }
 
 /* Shimmer stripe for skeleton placeholders. */

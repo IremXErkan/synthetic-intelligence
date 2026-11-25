@@ -1,33 +1,37 @@
 import { Link, useLocation } from 'react-router'
 import { FileX2 } from 'lucide-react'
+import HudPanel from '../components/common/HudPanel.jsx'
+import { DataList, DataRow } from '../components/common/DataRow.jsx'
 
 /** Themed 404 for unknown routes (and later for invalid detail IDs). */
 function NotFoundPage({ title = 'File not found', message }) {
   const { pathname } = useLocation()
 
   return (
-    <div className="mx-auto flex max-w-7xl justify-center px-4 py-20 sm:px-6">
-      <section className="relative w-full max-w-xl rounded-lg border border-line bg-panel p-8 text-center">
-        {/* Corner brackets */}
-        <span aria-hidden="true" className="absolute left-3 top-3 size-4 border-l-2 border-t-2 border-threat-critical/60" />
-        <span aria-hidden="true" className="absolute bottom-3 right-3 size-4 border-b-2 border-r-2 border-threat-critical/60" />
+    <div className="mx-auto flex max-w-7xl justify-center px-4 py-16 sm:px-6">
+      <HudPanel variant="alert" title="Error 404" titleAs="p" brackets className="w-full max-w-xl" bodyClassName="px-6 py-10 sm:px-10">
+        <div className="text-center">
+          <FileX2 className="mx-auto size-10 text-threat-critical" aria-hidden="true" />
+          <h1 className="mt-4 text-3xl font-bold text-ink">{title}</h1>
+          <p className="mt-3 text-ink-muted">
+            {message || 'No archive record exists at this location. It may have been moved, redacted or never existed.'}
+          </p>
+        </div>
 
-        <FileX2 className="mx-auto size-10 text-threat-critical" aria-hidden="true" />
-        <p className="label-mono mt-4 text-threat-critical">Error 404 · Record missing</p>
-        <h1 className="mt-2 text-3xl font-bold text-ink">{title}</h1>
-        <p className="mt-3 text-ink-muted">
-          {message || 'No archive record exists at this location. It may have been moved, redacted or never existed.'}
-        </p>
-        <p className="mt-4 break-all font-mono text-xs text-ink-muted">
-          <span className="text-ink">REQUEST:</span> {pathname}
-        </p>
-        <Link
-          to="/"
-          className="mt-6 inline-block rounded border border-signal/50 px-4 py-2 text-sm font-medium text-signal transition-colors hover:bg-signal/10"
-        >
-          Return to Command Center
-        </Link>
-      </section>
+        <DataList className="mt-6 border-t border-line pt-5">
+          <DataRow label="Request" value={<span className="break-all font-mono text-xs">{pathname}</span>} variant="neutral" />
+          <DataRow label="Status" value={<span className="label-mono text-threat-critical">Analysis failed</span>} variant="neutral" />
+        </DataList>
+
+        <div className="mt-8 text-center">
+          <Link
+            to="/"
+            className="chamfer inline-block bg-signal/15 px-5 py-2 text-sm font-medium text-signal transition-colors [--cut:8px] hover:bg-signal/25"
+          >
+            Return to Command Center
+          </Link>
+        </div>
+      </HudPanel>
     </div>
   )
 }

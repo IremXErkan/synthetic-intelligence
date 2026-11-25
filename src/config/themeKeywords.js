@@ -70,7 +70,10 @@ export const THEME_GROUP_KEYS = Object.keys(THEME_GROUPS)
  */
 export const MIN_VOTE_COUNT = 50
 
-/** TV genres excluded from theme lists: 10762 = Kids (Doraemon, Super Wings…). */
+/**
+ * TV genres excluded from theme lists: 10762 = Kids (Doraemon, Super Wings…).
+ * At the 50-vote threshold this takes TV from 141 to 123 titles.
+ */
 export const TV_EXCLUDED_GENRES = [10762]
 
 /**
@@ -84,4 +87,24 @@ export function buildKeywordFilter(groupKeys = THEME_GROUP_KEYS) {
   const valid = groupKeys.filter((key) => key in THEME_GROUPS)
   const selected = valid.length > 0 ? valid : THEME_GROUP_KEYS
   return selected.flatMap((key) => THEME_GROUPS[key].keywords.map((k) => k.id)).join('|')
+}
+
+export const DEFAULT_SORT = 'popularity.desc'
+
+/**
+ * Single source of truth for the theme /discover query. The list pages and the
+ * archive counts in the status bar both use this, so their numbers always match.
+ * @param {'movie'|'tv'} mediaType
+ * @param {{ groups?: string[], includeLowVotes?: boolean }} options
+ * @returns {object} discover params (without page / sort / user filters)
+ */
+export function getThemeDiscoverParams(mediaType, { groups = THEME_GROUP_KEYS, includeLowVotes = false } = {}) {
+  const params = {
+    with_keywords: buildKeywordFilter(groups),
+    'vote_count.gte': includeLowVotes ? 0 : MIN_VOTE_COUNT,
+  }
+  if (mediaType === 'tv') {
+    params.without_genres = TV_EXCLUDED_GENRES.join(',')
+  }
+  return params
 }

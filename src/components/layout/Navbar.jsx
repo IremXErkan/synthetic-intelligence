@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router'
 import { Menu, X } from 'lucide-react'
+import StatusBar from './StatusBar.jsx'
 
 const NAV_LINKS = [
   { to: '/movies', label: 'Movies' },
@@ -42,10 +43,10 @@ function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-void/85 backdrop-blur">
       <nav aria-label="Main" className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" onClick={closeMenu} className="flex items-center gap-3" aria-label="Synthetic Intelligence — Command Center">
+        <Link to="/" onClick={closeMenu} className="group flex items-center gap-3" aria-label="Synthetic Intelligence — Command Center">
           <span
             aria-hidden="true"
-            className="grid size-9 place-items-center rounded border border-signal/50 font-mono text-sm font-medium text-signal shadow-[0_0_12px_rgb(56_189_248/0.25)]"
+            className="chamfer grid size-9 place-items-center bg-signal/15 font-mono text-sm font-medium text-signal transition-colors [--cut:8px] group-hover:bg-signal/25"
           >
             SI
           </span>
@@ -78,6 +79,8 @@ function Navbar() {
           {menuOpen ? <X className="size-6" aria-hidden="true" /> : <Menu className="size-6" aria-hidden="true" />}
         </button>
       </nav>
+
+      <StatusBar />
 
       {menuOpen && (
         <ul id="mobile-menu" className="border-t border-line bg-panel py-2 md:hidden">

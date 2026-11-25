@@ -10,7 +10,7 @@ const TONES = {
 export function Badge({ tone = 'neutral', className = '', children }) {
   return (
     <span
-      className={`label-mono inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[0.6875rem] ${TONES[tone]} ${className}`}
+      className={`label-mono chamfer inline-flex items-center gap-1 border px-2 [--cut:5px] py-0.5 text-[0.6875rem] ${TONES[tone]} ${className}`}
     >
       {children}
     </span>
@@ -33,7 +33,7 @@ export function ThreatBadge({ level }) {
 
   return (
     <span
-      className={`label-mono inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-[0.6875rem] ${style.className}`}
+      className={`label-mono chamfer inline-flex items-center gap-1.5 border px-2 [--cut:5px] py-0.5 text-[0.6875rem] ${style.className}`}
     >
       <Icon className="size-3.5" aria-hidden="true" />
       <span>

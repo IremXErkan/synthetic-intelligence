@@ -2,6 +2,8 @@
 // functions exported here (usually through the useFetch hook).
 // Docs: https://developer.themoviedb.org/docs/getting-started
 
+import { DEFAULT_SORT, getThemeDiscoverParams } from '../config/themeKeywords.js'
+
 const API_BASE_URL = 'https://api.themoviedb.org/3'
 const READ_TOKEN = import.meta.env.VITE_TMDB_READ_TOKEN
 
@@ -44,8 +46,32 @@ function buildUrl(path, params) {
   return url.toString()
 }
 
+// ---- Connection status ---------------------------------------------------
+// Real link state shown in the status bar: 'connecting' until the first
+// response, then 'online' or 'error'. A 404 for one missing record does not
+// mean the link is down, so only auth, server and network failures set 'error'.
+let connectionStatus = 'connecting'
+const statusListeners = new Set()
+
+function setConnectionStatus(next) {
+  if (next === connectionStatus) return
+  connectionStatus = next
+  statusListeners.forEach((listener) => listener())
+}
+
+/** For useSyncExternalStore. */
+export function subscribeConnectionStatus(listener) {
+  statusListeners.add(listener)
+  return () => statusListeners.delete(listener)
+}
+
+export function getConnectionStatus() {
+  return connectionStatus
+}
+
 async function fetchJson(url) {
   if (!READ_TOKEN) {
+    setConnectionStatus('error')
     throw new TmdbError('TMDB access token is missing. Set VITE_TMDB_READ_TOKEN in .env.')
   }
 
@@ -58,16 +84,19 @@ async function fetchJson(url) {
       },
     })
   } catch {
+    setConnectionStatus('error')
     throw new TmdbError('Network error: could not reach TMDB. Check your connection.')
   }
 
   const body = await response.json().catch(() => null)
 
   if (!response.ok) {
+    if (response.status === 401 || response.status >= 500) setConnectionStatus('error')
     // TMDB error bodies look like { success: false, status_code, status_message }.
     const message = body?.status_message || `TMDB request failed (HTTP ${response.status}).`
     throw new TmdbError(message, { status: response.status, code: body?.status_code ?? null })
   }
+  setConnectionStatus('online')
   return body
 }
 
@@ -124,4 +153,22 @@ export function tmdbRequest(path, params = {}, { signal } = {}) {
 /** GET /discover/movie → { page, results[], total_pages, total_results } */
 export function discoverMovies(params = {}, options) {
   return tmdbRequest('/discover/movie', { ...LIST_PARAMS, ...params }, options)
+}
+
+/**
+ * Theme archive query: GET /discover/{movie|tv} with the shared theme params
+ * (keywords, vote threshold, excluded TV genres) from config/themeKeywords.js.
+ * Same defaults → same URL → same cache entry for every caller.
+ * @param {'movie'|'tv'} mediaType
+ * @param {{ groups?: string[], includeLowVotes?: boolean, sort?: string, page?: number, filters?: object }} query
+ */
+export function discoverTheme(mediaType, { groups, includeLowVotes, sort = DEFAULT_SORT, page = 1, filters = {} } = {}, options) {
+  const params = {
+    ...LIST_PARAMS,
+    ...getThemeDiscoverParams(mediaType, { groups, includeLowVotes }),
+    sort_by: sort,
+    page,
+    ...filters,
+  }
+  return tmdbRequest(`/discover/${mediaType}`, params, options)
 }
