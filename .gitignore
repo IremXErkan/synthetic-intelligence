@@ -33,3 +33,6 @@ dist-ssr
 
 # Design reference images (inspiration only, not redistributed)
 design-refs/
+
+# Personal prompt notes (kept locally, not part of the submission)
+PROMPTS.md
