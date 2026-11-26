@@ -89,6 +89,16 @@ export function buildKeywordFilter(groupKeys = THEME_GROUP_KEYS) {
   return selected.flatMap((key) => THEME_GROUPS[key].keywords.map((k) => k.id)).join('|')
 }
 
+/**
+ * Theme groups a production belongs to, from its TMDB keyword IDs
+ * (movie: keywords.keywords[], tv: keywords.results[]).
+ * @returns {string[]} group keys, e.g. ['ai', 'android']; [] if not in the theme
+ */
+export function getThemeGroupsForKeywords(keywordIds = []) {
+  const ids = new Set(keywordIds)
+  return THEME_GROUP_KEYS.filter((key) => THEME_GROUPS[key].keywords.some((keyword) => ids.has(keyword.id)))
+}
+
 export const DEFAULT_SORT = 'popularity.desc'
 
 /**

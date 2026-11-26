@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import { MotionConfig, motion } from 'framer-motion'
 import Navbar from './components/layout/Navbar.jsx'
@@ -9,10 +10,18 @@ import CastPage from './pages/CastPage.jsx'
 import EntitiesPage from './pages/EntitiesPage.jsx'
 import LabPage from './pages/LabPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
+import MediaDetailPage from './pages/MediaDetailPage.jsx'
+import PersonDetailPage from './pages/PersonDetailPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 
 function App() {
   const { pathname } = useLocation()
+
+  // New page → start at the top (filter changes keep the scroll position, since
+  // they only change the query string, not the pathname).
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   return (
     // reducedMotion="user": animations are skipped when the OS asks for reduced motion.
@@ -42,6 +51,8 @@ function App() {
             <Route path="/cast" element={<CastPage />} />
             <Route path="/entities" element={<EntitiesPage />} />
             <Route path="/lab" element={<LabPage />} />
+            <Route path="/media/:type/:id" element={<MediaDetailPage />} />
+            <Route path="/person/:id" element={<PersonDetailPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
