@@ -5,7 +5,7 @@ import { getTitle } from '../../../utils/media.js'
 import HudRings from '../../common/HudRings.jsx'
 import TintedImage from '../../common/TintedImage.jsx'
 
-const HEADLINES = ['Built to serve', 'To calculate · To protect', 'Some chose otherwise']
+const HEADLINES = ['Made to help us', 'To serve · To protect', 'Some wanted more']
 
 /**
  * Scene 2 — Hook. Live TMDB stills of the archive's productions cycle inside the

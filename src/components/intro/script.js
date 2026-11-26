@@ -13,13 +13,13 @@ export const SCENES = [
     chapter: 'System boot',
     leadMs: 1100, // wait for the panel to materialize
     minMs: 6500,
-    lines: () => ['Initializing archive.', 'Connection to The Movie Database... established.'],
+    lines: () => ['For a hundred years, cinema has dreamed of thinking machines.', 'This is their archive.'],
   },
   {
     id: 'hook',
     chapter: 'Origin',
     minMs: 7000,
-    lines: () => ['They were built to serve.', 'To calculate. To protect.', 'Some of them... chose otherwise.'],
+    lines: () => ['They were made to help us.', 'To serve. To protect.', 'But some of them began to want more.'],
   },
   {
     id: 'archive',
@@ -28,53 +28,53 @@ export const SCENES = [
     // Fixed sentences so they can be recorded; the live counts are shown on
     // screen by the scene's counters instead of being spoken.
     lines: () => [
-      'This archive tracks synthetic intelligence across cinema.',
+      'Here, they are all on record.',
       'Hundreds of films and series.',
-      'All data retrieved live.',
+      'And every one of them is live.',
     ],
   },
   {
     id: 'filter',
     chapter: 'Search & filter',
     minMs: 7000,
-    lines: () => ['Search and filter by era, genre, and class:', 'artificial intelligence, robot, android, cyborg.'],
+    lines: () => ['Search them by era, by genre, by kind of mind:', 'the A.I., the robot, the android, the cyborg.'],
   },
   {
     id: 'cast',
     chapter: 'Cast registry',
     minMs: 6000,
-    lines: () => ['The Cast Registry reveals the actors who gave these machines a face...', 'and a voice.'],
+    lines: () => ['Meet the actors who brought them to life...', 'in body, and in voice.'],
   },
   {
     id: 'dossier',
     chapter: 'Dossiers',
     minMs: 8000,
-    lines: () => ['Each classified dossier combines live production data with our own archive analysis.'],
+    lines: () => ['Open a classified file, and see what we know about them.'],
   },
   {
     id: 'lab',
     chapter: 'Comparison lab',
     minMs: 7000,
-    lines: () => ['In the Comparison Lab, compare them side by side.', 'HAL 9000... versus TARS.'],
+    lines: () => ['Put two of them side by side.', 'HAL 9000... or TARS?'],
   },
   {
     id: 'network',
     chapter: 'Network',
     minMs: 6000,
-    lines: () => ['The Intelligence Network shows how they are all connected.'],
+    lines: () => ['Follow the threads that connect them all.'],
   },
   {
     id: 'terminal',
     chapter: 'Terminal',
     minMs: 7000,
-    lines: () => ['For direct access, press Control K.', 'The Archive Terminal runs your commands on live data.'],
+    lines: () => ['And when you know exactly what you are looking for...', 'press Control K.'],
   },
   {
     id: 'close',
     chapter: 'Clearance',
     final: true, // waits on ENTER ARCHIVE instead of moving on
     minMs: 0,
-    lines: () => ['Clearance granted.', 'Proceed with caution.'],
+    lines: () => ['Your clearance is granted.', 'Enter carefully.'],
   },
 ]
 

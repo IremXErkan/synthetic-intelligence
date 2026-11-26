@@ -7,7 +7,7 @@ function CloseScene({ lineIndex, onEnter }) {
       <ShieldCheck className="size-12 text-threat-low" aria-hidden="true" />
       <div>
         <p className="font-mono text-2xl tracking-[0.3em] text-threat-low sm:text-3xl">CLEARANCE GRANTED</p>
-        {lineIndex >= 1 && <p className="label-mono mt-3 text-threat-high">Proceed with caution</p>}
+        {lineIndex >= 1 && <p className="label-mono mt-3 text-threat-high">Enter carefully</p>}
       </div>
       <button
         type="button"
