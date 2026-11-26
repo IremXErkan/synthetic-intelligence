@@ -2,13 +2,13 @@
 // events. Slow rotation stops for prefers-reduced-motion.
 const RING = 'origin-center [transform-box:fill-box] motion-reduce:animate-none'
 
-function HudRings({ className = '' }) {
+function HudRings({ className = '', color = 'text-signal' }) {
   return (
     <svg
       viewBox="0 0 200 200"
       aria-hidden="true"
       focusable="false"
-      className={`pointer-events-none text-signal ${className}`}
+      className={`pointer-events-none ${color} ${className}`}
     >
       <g className={`${RING} animate-[spin_90s_linear_infinite]`}>
         <circle cx="100" cy="100" r="97" fill="none" stroke="currentColor" strokeOpacity="0.5" strokeWidth="0.6" strokeDasharray="1 4" />

@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import { MotionConfig, motion } from 'framer-motion'
 import Navbar from './components/layout/Navbar.jsx'
@@ -10,6 +10,8 @@ import { hasSeenIntro, markIntroSeen } from './components/intro/introStorage.js'
 
 // The intro (and everything it pulls in) is its own chunk, loaded only when shown.
 const IntroOverlay = lazy(() => import('./components/intro/IntroOverlay.jsx'))
+// The Archive Terminal (Ctrl+K) is its own chunk too, loaded on first open.
+const ArchiveTerminal = lazy(() => import('./components/terminal/ArchiveTerminal.jsx'))
 
 // Route-level code splitting: each page (and heavy libraries such as Recharts
 // on /lab) is downloaded only when it is first visited. Home and 404 stay in
@@ -45,10 +47,46 @@ function App() {
     requestAnimationFrame(() => document.getElementById('main')?.focus())
   }
 
+  // Archive Terminal: Ctrl+K (Cmd+K on macOS) toggles it, except while the intro runs.
+  const [terminalOpen, setTerminalOpen] = useState(false)
+  const terminalOpenerRef = useRef(null)
+  const openTerminal = useCallback(() => {
+    terminalOpenerRef.current = document.activeElement
+    setTerminalOpen(true)
+  }, [])
+  // After a navigation command focus goes to the new page, otherwise back to the opener.
+  // Router navigations commit as transitions (later than the next frame), so the new
+  // <main> is focused from the pathname effect below.
+  const focusMainAfterNavigationRef = useRef(false)
+  const pathnameRef = useRef(pathname)
+  const closeTerminal = useCallback(({ navigatedTo } = {}) => {
+    setTerminalOpen(false)
+    const samePage = navigatedTo && navigatedTo.split('?')[0] === pathnameRef.current
+    if (navigatedTo && !samePage) focusMainAfterNavigationRef.current = true
+    else requestAnimationFrame(() => (samePage ? document.getElementById('main') : terminalOpenerRef.current)?.focus?.())
+  }, [])
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (!(event.ctrlKey || event.metaKey) || event.altKey || event.shiftKey || event.key.toLowerCase() !== 'k') return
+      if (introOpen) return
+      event.preventDefault() // browsers use Ctrl+K for the address bar
+      if (terminalOpen) closeTerminal()
+      else openTerminal()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [introOpen, terminalOpen, openTerminal, closeTerminal])
+
   // New page → start at the top (filter changes keep the scroll position, since
   // they only change the query string, not the pathname).
   useEffect(() => {
     window.scrollTo(0, 0)
+    pathnameRef.current = pathname
+    if (focusMainAfterNavigationRef.current) {
+      focusMainAfterNavigationRef.current = false
+      document.getElementById('main')?.focus()
+    }
   }, [pathname])
 
   return (
@@ -60,15 +98,21 @@ function App() {
         </Suspense>
       )}
 
-      {/* While the intro dialog is open the page behind it is inert (no focus, not read out). */}
-      <div className="flex min-h-screen flex-col" inert={introOpen}>
+      {terminalOpen && (
+        <Suspense fallback={null}>
+          <ArchiveTerminal onClose={closeTerminal} />
+        </Suspense>
+      )}
+
+      {/* While a dialog (intro or terminal) is open the page behind it is inert (no focus, not read out). */}
+      <div className="flex min-h-screen flex-col" inert={introOpen || terminalOpen}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-signal focus:px-4 focus:py-2 focus:text-void"
         >
           Skip to content
         </a>
-        <Navbar />
+        <Navbar onOpenTerminal={openTerminal} />
 
         {/* Enter-only fade on route change (no exit animation, so no AnimatePresence needed). */}
         <motion.main

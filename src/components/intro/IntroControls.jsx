@@ -29,23 +29,6 @@ export function ChapterRail({ scenes, activeIndex, onSelect }) {
   )
 }
 
-/** Outlined key cap + label, e.g. [ESC] SKIP. Also a clickable button for mouse/touch users. */
-export function KeyHint({ keyLabel, label, onClick, pressed }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={pressed}
-      className="group flex items-center gap-2.5 font-mono text-base uppercase tracking-[0.18em] text-ink"
-    >
-      <span className="rounded-[3px] border-2 border-ink/80 px-2 py-0.5 text-xs group-hover:border-holo group-hover:text-holo">
-        {keyLabel}
-      </span>
-      <span>{label}</span>
-    </button>
-  )
-}
-
 /** Decorative waveform shown while the narrator speaks (aria-hidden, no data). */
 export function VoiceWave({ active }) {
   const bars = [0.5, 0.9, 0.6, 1, 0.7, 0.4, 0.8, 0.55, 0.95, 0.65, 0.45, 0.85]

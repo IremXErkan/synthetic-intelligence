@@ -9,9 +9,11 @@ import LocalClock from './LocalClock.jsx'
 // entry) as page 1 of /movies and /series with no filters applied.
 const fetchMovieArchive = (signal) => discoverTheme('movie', {}, { signal })
 const fetchSeriesArchive = (signal) => discoverTheme('tv', {}, { signal })
+const ARCHIVE_FETCHERS = { movie: fetchMovieArchive, tv: fetchSeriesArchive }
 
-function ArchiveCount({ fetcher, unit }) {
-  const { data, error, loading } = useFetch(fetcher)
+/** Live archive total for 'movie' or 'tv' (also used by the Archive Terminal). */
+export function ArchiveCount({ mediaType, unit }) {
+  const { data, error, loading } = useFetch(ARCHIVE_FETCHERS[mediaType])
 
   let value
   if (loading) value = '…'
@@ -36,8 +38,8 @@ function StatusBar() {
         <StatusDot status={status} label="TMDB link" />
         <div className="flex items-center gap-4">
           <span className="label-mono hidden text-ink-muted sm:inline">Archive</span>
-          <ArchiveCount fetcher={fetchMovieArchive} unit="Films" />
-          <ArchiveCount fetcher={fetchSeriesArchive} unit="Series" />
+          <ArchiveCount mediaType="movie" unit="Films" />
+          <ArchiveCount mediaType="tv" unit="Series" />
           <span className="hidden lg:inline-flex">
             <LocalClock />
           </span>

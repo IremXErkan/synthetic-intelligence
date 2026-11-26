@@ -5,6 +5,7 @@ const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/'
 
 // Sizes we use, all taken from the /configuration size lists.
 export const IMAGE_SIZES = {
+  posterThumb: 'w92', // poster_sizes (terminal result rows)
   posterCard: 'w342', // poster_sizes
   posterDetail: 'w500', // poster_sizes
   backdrop: 'w1280', // backdrop_sizes

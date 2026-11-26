@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router'
-import { Menu, X } from 'lucide-react'
+import { Menu, SquareTerminal, X } from 'lucide-react'
 import StatusBar from './StatusBar.jsx'
 
 const NAV_LINKS = [
@@ -47,7 +47,7 @@ const mobileLinkClass = (active) =>
 
 const ariaCurrent = (state) => (state === 'page' ? 'page' : state === 'section' ? 'true' : undefined)
 
-function Navbar() {
+function Navbar({ onOpenTerminal }) {
   const { pathname } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const closeMenu = () => setMenuOpen(false)
@@ -92,17 +92,36 @@ function Navbar() {
           })}
         </ul>
 
-        {/* Mobile toggle */}
-        <button
-          type="button"
-          className="rounded p-2 text-ink-muted hover:text-ink lg:hidden"
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? <X className="size-6" aria-hidden="true" /> : <Menu className="size-6" aria-hidden="true" />}
-        </button>
+        <div className="flex items-center gap-1">
+          {/* Archive Terminal (also Ctrl+K); the button makes it reachable on touch screens. */}
+          <button
+            type="button"
+            onClick={() => {
+              closeMenu()
+              onOpenTerminal()
+            }}
+            aria-label="Open archive terminal"
+            aria-keyshortcuts="Control+K"
+            className="group flex items-center gap-2 rounded p-2 text-ink-muted hover:text-holo"
+          >
+            <SquareTerminal className="size-5" aria-hidden="true" />
+            <kbd className="label-mono hidden rounded-[3px] border border-line-strong px-1.5 py-px text-[0.625rem] group-hover:border-holo/60 sm:inline">
+              Ctrl K
+            </kbd>
+          </button>
+
+          {/* Mobile toggle */}
+          <button
+            type="button"
+            className="rounded p-2 text-ink-muted hover:text-ink lg:hidden"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X className="size-6" aria-hidden="true" /> : <Menu className="size-6" aria-hidden="true" />}
+          </button>
+        </div>
       </nav>
 
       <StatusBar />

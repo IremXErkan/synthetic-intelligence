@@ -23,7 +23,7 @@
   --color-ink-muted: #8b97ad;
 
   --color-signal: #22d3ee; /* cyan, per DESIGN.md */
-  --color-holo: #5eead4; /* mint-teal used only by the intro's holographic HUD */
+  --color-holo: #5eead4; /* mint-teal for holographic HUDs: the intro and the Archive Terminal */
   --color-pulse: #a78bfa;
 
   --color-threat-low: #4ade80;

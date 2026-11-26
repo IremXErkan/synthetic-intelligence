@@ -21,6 +21,13 @@ const VARIANTS = {
     bracket: 'text-threat-critical/70',
     glow: 'group-hover:drop-shadow-[0_0_10px_rgb(248_113_113/0.4)] group-focus-visible:drop-shadow-[0_0_10px_rgb(248_113_113/0.4)]',
   },
+  // Holographic teal: the intro and the Archive Terminal.
+  holo: {
+    frame: 'bg-holo/45',
+    tab: 'bg-holo/15 text-holo',
+    bracket: 'text-holo/70',
+    glow: 'group-hover:drop-shadow-[0_0_10px_rgb(94_234_212/0.4)] group-focus-visible:drop-shadow-[0_0_10px_rgb(94_234_212/0.4)]',
+  },
   neutral: {
     frame: 'bg-line-strong',
     tab: 'bg-line text-ink-muted',
@@ -39,6 +46,8 @@ const BRACKET = 'pointer-events-none absolute size-3.5 border-current'
  *   hovered or keyboard-focused (e.g. a card <Link className="group">), never at rest.
  * - `title` renders a slanted tab above the panel as a real heading, and the
  *   panel becomes a <section> labelled by it.
+ * - `fill`: the frame stretches to the panel's height (for fixed-height panels).
+ * - `surface`: background classes of the body (e.g. translucent glass).
  */
 function HudPanel({
   title,
@@ -50,6 +59,8 @@ function HudPanel({
   as,
   className = '',
   bodyClassName = 'p-5',
+  fill = false,
+  surface = 'bg-panel',
   children,
 }) {
   const titleId = useId()
@@ -67,8 +78,8 @@ function HudPanel({
         </Heading>
       )}
 
-      <div className={`chamfer p-px ${style.frame}`} style={{ '--cut': `${cut}px` }}>
-        <div className={`chamfer relative h-full bg-panel ${bodyClassName}`} style={{ '--cut': `${cut}px` }}>
+      <div className={`chamfer p-px ${fill ? 'h-full' : ''} ${style.frame}`} style={{ '--cut': `${cut}px` }}>
+        <div className={`chamfer relative h-full ${surface} ${bodyClassName}`} style={{ '--cut': `${cut}px` }}>
           {children}
         </div>
       </div>
