@@ -12,6 +12,7 @@ import LabPage from './pages/LabPage.jsx'
 import AboutPage from './pages/AboutPage.jsx'
 import MediaDetailPage from './pages/MediaDetailPage.jsx'
 import PersonDetailPage from './pages/PersonDetailPage.jsx'
+import EntityDetailPage from './pages/EntityDetailPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
             <Route path="/lab" element={<LabPage />} />
             <Route path="/media/:type/:id" element={<MediaDetailPage />} />
             <Route path="/person/:id" element={<PersonDetailPage />} />
+            <Route path="/entity/:slug" element={<EntityDetailPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
