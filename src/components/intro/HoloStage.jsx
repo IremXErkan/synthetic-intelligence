@@ -120,7 +120,7 @@ function HoloStage({ onClose }) {
         {!reduceMotion && (
           <motion.div
             aria-hidden="true"
-            className="absolute h-0.5 w-[min(1100px,94vw)] bg-signal shadow-[0_0_24px_rgb(34_211_238)]"
+            className="absolute h-0.5 w-[min(1180px,94vw)] bg-holo shadow-[0_0_24px_rgb(94_234_212)]"
             initial={{ scaleX: 0, opacity: 1 }}
             animate={{ scaleX: [0, 1, 1], opacity: [1, 1, 0] }}
             transition={{ duration: 0.75, times: [0, 0.4, 1] }}
@@ -128,49 +128,79 @@ function HoloStage({ onClose }) {
         )}
 
         <motion.div
-          className="relative w-full max-w-[1100px] [transform-style:preserve-3d] drop-shadow-[0_0_24px_rgb(34_211_238/0.35)]"
+          className="relative w-full max-w-[1180px] [transform-style:preserve-3d] drop-shadow-[0_0_22px_rgb(94_234_212/0.35)]"
           style={{ rotateX: tilt.rotateX, rotateY: tilt.rotateY }}
           {...panelIntro}
         >
-          {/* Glass panel: translucent dark-teal glass + a hollow cyan outline on top
-              (a filled frame layer would show through the translucent glass). */}
-          <div className="relative">
-            <div aria-hidden="true" className="chamfer-ring pointer-events-none absolute inset-0 z-10 bg-signal/80 [--cut:22px]" />
-            <div className="chamfer relative grid h-[min(620px,64vh)] grid-rows-[auto_1fr] bg-[rgb(4_24_31/0.62)] backdrop-blur-md [--cut:22px] md:grid-cols-[200px_1fr] md:grid-rows-[auto_1fr]">
-              {/* Scan lines over the glass (behind the text panels, very faint) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(to_bottom,rgb(34_211_238/0.04)_0_1px,transparent_1px_4px)]" />
+          {/* Title plate above the screen, glowing like the reference HUD heading */}
+          <div className="mb-3 flex items-center gap-4 md:pl-60">
+            <span aria-hidden="true" className="hidden h-px flex-1 bg-gradient-to-r from-transparent to-holo/70 md:block" />
+            <p className="font-mono text-xl font-semibold uppercase tracking-[0.18em] text-holo [text-shadow:0_0_18px_rgb(94_234_212/0.6)] md:text-3xl">
+              {scene.chapter}
+            </p>
+            <span aria-hidden="true" className="hidden h-px w-10 bg-holo/70 md:block" />
+          </div>
 
-              <header className="relative col-span-full flex items-center justify-between border-b border-signal/25 px-5 py-3">
-                <p className="label-mono text-signal">
-                  Archive boot sequence <span aria-hidden="true">//</span> {String(narration.sceneIndex + 1).padStart(2, '0')}/
-                  {String(AVAILABLE_SCENES.length).padStart(2, '0')}
-                </p>
-                <div className="flex items-center gap-3">
-                  <span className="label-mono hidden text-[0.6875rem] text-ink-muted sm:inline">
-                    {muted || !voice ? 'Narration: captions only' : 'Narration: audio'}
-                  </span>
-                  <VoiceWave active={narration.speaking} />
-                </div>
-              </header>
+          <div className="relative flex items-stretch gap-8">
+            {/* Chapter menu floats outside the glass, linked to it by a thin line */}
+            <div className="relative hidden w-52 shrink-0 self-center md:block">
+              <ChapterRail scenes={AVAILABLE_SCENES} activeIndex={narration.sceneIndex} onSelect={narration.goTo} />
+              <span aria-hidden="true" className="absolute -right-8 top-1/2 h-px w-8 bg-holo/60" />
+            </div>
 
-              <aside className="relative hidden border-r border-signal/20 p-4 md:block">
-                <ChapterRail scenes={AVAILABLE_SCENES} activeIndex={narration.sceneIndex} onSelect={narration.goTo} />
-              </aside>
+            {/* Glass screen */}
+            <div className="relative min-w-0 flex-1">
+              {/* Accent rails and side tabs extending beyond the screen edges (decorative) */}
+              <span aria-hidden="true" className="absolute -left-10 -right-16 top-7 hidden h-px bg-holo/30 md:block" />
+              <span aria-hidden="true" className="absolute -right-20 bottom-10 hidden h-px w-1/2 bg-holo/30 md:block" />
+              <span aria-hidden="true" className="chamfer absolute -left-2.5 top-1/2 hidden h-20 w-2.5 -translate-y-1/2 bg-holo/80 [--cut:4px] md:block" />
+              <span aria-hidden="true" className="chamfer absolute -right-2.5 top-[30%] hidden h-12 w-2.5 bg-holo/80 [--cut:4px] md:block" />
+              <span aria-hidden="true" className="absolute -bottom-3 right-10 hidden h-1 w-40 bg-holo/70 md:block" />
 
-              <section className="relative min-h-0 overflow-hidden p-4 md:p-6" aria-label={scene.chapter}>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={scene.id}
-                    className="h-full"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.35 }}
-                  >
-                    <Scene lineIndex={narration.lineIndex} media={media} counts={counts.data} onEnter={onClose} reduceMotion={reduceMotion} />
-                  </motion.div>
-                </AnimatePresence>
-              </section>
+              {/* Translucent teal glass + hollow outline on top (a filled frame would show through) */}
+              <div aria-hidden="true" className="chamfer-ring pointer-events-none absolute inset-0 z-10 bg-holo/85 [--cut:26px]" />
+              <div className="chamfer relative grid h-[64vh] grid-rows-[auto_1fr_auto] bg-[rgb(16_88_94/0.5)] backdrop-blur-md [--cut:26px] md:h-[min(600px,60vh)]">
+                {/* Scan lines over the glass (very faint) */}
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(to_bottom,rgb(94_234_212/0.05)_0_1px,transparent_1px_4px)]" />
+
+                <header className="relative flex items-center justify-between border-b border-holo/30 px-6 py-3">
+                  <p className="label-mono text-holo">
+                    Archive data link <span aria-hidden="true">//</span> scene {String(narration.sceneIndex + 1).padStart(2, '0')}
+                  </p>
+                  <p className="label-mono text-ink">{paused ? 'Paused' : 'Live · TMDB'}</p>
+                </header>
+
+                <section className="relative min-h-0 overflow-hidden px-6 py-4 md:px-10" aria-label={scene.chapter}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={scene.id}
+                      className="h-full"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.35 }}
+                    >
+                      <Scene lineIndex={narration.lineIndex} media={media} counts={counts.data} onEnter={onClose} reduceMotion={reduceMotion} />
+                    </motion.div>
+                  </AnimatePresence>
+                </section>
+
+                {/* "Voice data" sub-panel with an orange frame, as in the reference */}
+                <footer className="relative mx-6 mb-5 hidden border border-threat-high/80 sm:block">
+                  <div className="flex items-center justify-between bg-holo/20 px-3 py-1.5">
+                    <p className="label-mono text-holo">Voice data</p>
+                    <p className="label-mono text-ink">
+                      {String(narration.sceneIndex + 1).padStart(2, '0')}/{String(AVAILABLE_SCENES.length).padStart(2, '0')}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4 px-3 py-2">
+                    <VoiceWave active={narration.speaking} />
+                    <p className="truncate text-sm text-ink">
+                      {!voice ? 'No speech voice available · captions only' : muted ? 'Narrator muted · captions only' : `Narrator · ${voice.name}`}
+                    </p>
+                  </div>
+                </footer>
+              </div>
             </div>
           </div>
         </motion.div>
@@ -181,9 +211,8 @@ function HoloStage({ onClose }) {
         <p aria-live="polite" className="max-w-3xl bg-void/75 px-4 py-2 text-center text-base leading-relaxed text-ink sm:text-lg">
           {narration.caption}
         </p>
-        <div className="flex w-full max-w-[1100px] flex-wrap items-center justify-between gap-4">
-          <p className="label-mono text-[0.6875rem] text-ink-muted">{paused ? 'Paused' : 'Live archive data · TMDB'}</p>
-          <div className="flex flex-wrap items-center gap-5">
+        <div className="flex w-full max-w-[1180px] flex-wrap items-center justify-end gap-4">
+          <div className="flex flex-wrap items-center gap-6">
             <KeyHint keyLabel="Esc" label="Skip" onClick={onClose} />
             <KeyHint keyLabel="Space" label={paused ? 'Resume' : 'Pause'} onClick={() => setPaused((p) => !p)} pressed={paused} />
             <KeyHint keyLabel="M" label={muted ? 'Unmute' : 'Mute'} onClick={() => setMuted((m) => !m)} pressed={muted} />

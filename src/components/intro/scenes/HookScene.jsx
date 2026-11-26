@@ -24,8 +24,8 @@ function HookScene({ lineIndex, media, reduceMotion }) {
   const headline = HEADLINES[Math.min(lineIndex, HEADLINES.length - 1)]
 
   return (
-    <div className="grid h-full items-center gap-6 md:grid-cols-[1fr_1.1fr]">
-      <div className="relative mx-auto aspect-square w-full max-w-72">
+    <div className="grid h-full content-center items-center gap-4 md:gap-6 md:grid-cols-[1fr_1.1fr]">
+      <div className="relative mx-auto aspect-square w-full max-w-44 md:max-w-72">
         <HudRings className="absolute inset-0 size-full" />
         <div className="absolute inset-[18%] overflow-hidden rounded-full border border-signal/40">
           <AnimatePresence mode="popLayout">
@@ -51,7 +51,7 @@ function HookScene({ lineIndex, media, reduceMotion }) {
       </div>
 
       <div>
-        <p className="label-mono text-signal">Subject class: synthetic intelligence</p>
+        <p className="label-mono text-holo">Subject class: synthetic intelligence</p>
         <AnimatePresence mode="wait">
           <motion.h2
             key={headline}
@@ -64,7 +64,7 @@ function HookScene({ lineIndex, media, reduceMotion }) {
             {headline}
           </motion.h2>
         </AnimatePresence>
-        {current && <p className="label-mono mt-4 text-[0.6875rem] text-ink-muted">Frame: {getTitle(current)} · TMDB</p>}
+        {current && <p className="label-mono mt-4 text-[0.6875rem] text-ink">Frame: {getTitle(current)} · TMDB</p>}
       </div>
     </div>
   )

@@ -17,14 +17,14 @@ function BootScene({ lineIndex, reduceMotion }) {
       </p>
 
       <ul className="space-y-3 text-sm sm:text-base">
-        <li className="text-ink-muted">
+        <li className="text-ink">
           <Typewriter text="> initializing archive ..." reduceMotion={reduceMotion} />
         </li>
-        <li className="text-ink-muted">
+        <li className="text-ink">
           <Typewriter text={`> loading dossier catalog ... ${ENTITIES.length} records`} reduceMotion={reduceMotion} />
         </li>
         {lineIndex >= 1 && (
-          <li className="flex flex-wrap items-center gap-3 text-ink-muted">
+          <li className="flex flex-wrap items-center gap-3 text-ink">
             <Typewriter text="> connecting to api.themoviedb.org ..." reduceMotion={reduceMotion} />
             <StatusDot status={status} />
           </li>
