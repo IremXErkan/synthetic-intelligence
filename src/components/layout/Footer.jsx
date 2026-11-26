@@ -36,7 +36,7 @@ function Footer({ onReplayIntro }) {
             <img src={TMDB_LOGO_URL} alt="TMDB logo" className="h-4 w-auto" width="185" height="16" loading="lazy" />
           </a>
           <p className="max-w-xs text-xs text-ink-muted md:text-right">
-            This product uses the TMDB API but is not endorsed or certified by TMDB.
+            This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.
           </p>
         </div>
       </div>

@@ -286,7 +286,7 @@ Deployed on **Vercel** from the `main` branch.
 
 <img src="public/tmdb-logo.svg" alt="TMDB logo" width="160">
 
-This product uses the TMDB API but is not endorsed or certified by TMDB.
+This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.
 All film, series and person data and images are provided by
 [The Movie Database (TMDB)](https://www.themoviedb.org/).
 

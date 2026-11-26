@@ -110,7 +110,8 @@ Kurallar:
 - Görsel URL'leri TMDB'nin image base URL + size + `file_path` kuralıyla
   oluşturulur (tek bir yardımcı fonksiyonda). `null` path için placeholder.
 - **Attribution:** Footer'da ve `/about` sayfasında TMDB logosu ve
-  "This product uses the TMDB API but is not endorsed or certified by TMDB."
+  "This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB."
+  (26.11 kontrolünde güncellendi: TMDB API Terms §3'teki güncel zorunlu ifade.)
   ifadesi. Kullanım koşullarını teslim öncesi tekrar kontrol et.
 - Muhtemel endpoint'ler (hepsini ilk gün doğrula):
   - `/search/keyword` → tema keyword ID'lerini bulmak için
@@ -390,8 +391,8 @@ Gereksiz soyutlama yapma. Bir şey tek yerde kullanılıyorsa ayrı dosyaya çı
 3. Comparison Lab
 4. Cila ve animasyonlar
 5. Network (kesilebilir) — tamamlandı
-6. Boot Sequence intro (26.11'de eklendi) — tamamlandı (A, B, C aşamaları; 26.11)
-7. Archive Terminal — **opsiyonel**, sadece intro tamamen bittikten sonra ve zaman kalırsa
+6. Boot Sequence intro (26.11'de eklendi) — tamamlandı (10 sahne, Terminal sahnesi dahil; 26.11)
+7. Archive Terminal — tamamlandı (26.11)
 
 ### Kapsam kararı: Boot Sequence intro (26.11'de eklendi)
 Kullanıcı onayıyla eklenen ekstra özellik. §13'teki "aşırı animasyon" maddesiyle

@@ -163,7 +163,7 @@ function AboutPage() {
             <img src="/tmdb-logo.svg" alt="TMDB logo" className="h-6 w-auto" width="185" height="24" />
           </a>
           <div className="space-y-2 text-sm text-ink">
-            <p className="font-medium">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+            <p className="font-medium">This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.</p>
             <p className="text-ink-muted">
               Film, series and people data and images are provided by The Movie Database. Fictional characters and
               productions belong to their respective rights holders. Back to the{' '}
