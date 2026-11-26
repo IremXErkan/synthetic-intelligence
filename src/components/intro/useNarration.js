@@ -75,7 +75,7 @@ export default function useNarration({ scenes, context, paused, muted, voice }) 
       // Scene finished: hold until its minimum time has passed, then move on.
       if (!scene.final && position.scene < scenes.length - 1) {
         const remaining = Math.max(0, scene.minMs - (performance.now() - sceneStartRef.current))
-        later(() => setPosition({ scene: position.scene + 1, line: 0 }), remaining + 300)
+        later(() => setPosition({ scene: position.scene + 1, line: 0 }), remaining + 150)
       }
     } else {
       const lead = position.line === 0 ? (scene.leadMs ?? 400) : 150

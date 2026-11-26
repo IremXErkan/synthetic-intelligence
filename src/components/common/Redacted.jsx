@@ -5,8 +5,10 @@ import { useState } from 'react'
  * (click / Enter / Space). Used only for flavour details in editorial notes,
  * never to hide information the page depends on.
  */
-export function Redacted({ children }) {
-  const [revealed, setRevealed] = useState(false)
+export function Redacted({ children, revealed: revealedProp }) {
+  const [revealedState, setRevealed] = useState(false)
+  // `revealed` prop (optional) lets a preview, e.g. the intro, declassify it on cue.
+  const revealed = revealedProp ?? revealedState
   const toggle = () => setRevealed((open) => !open)
 
   // A <span role="button"> instead of <button>: browsers lay buttons out as
@@ -42,7 +44,15 @@ export function Redacted({ children }) {
 }
 
 /** Renders editorial text where [[…]] marks a redacted passage. */
-export function RedactedText({ text }) {
+export function RedactedText({ text, revealed }) {
   const parts = text.split(/\[\[(.+?)\]\]/g) // odd indexes are the redacted passages
-  return parts.map((part, index) => (index % 2 === 1 ? <Redacted key={index}>{part}</Redacted> : part))
+  return parts.map((part, index) =>
+    index % 2 === 1 ? (
+      <Redacted key={index} revealed={revealed}>
+        {part}
+      </Redacted>
+    ) : (
+      part
+    ),
+  )
 }

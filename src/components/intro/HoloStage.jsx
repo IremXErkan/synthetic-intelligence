@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { discoverTheme } from '../../services/tmdb.js'
-import { fetchCatalogProductions } from '../../services/catalog.js'
+import { fetchCatalogProductions, fetchDossierRecord } from '../../services/catalog.js'
+import { fetchCastPreview } from '../../services/cast.js'
+import { getEntityBySlug } from '../../data/entities.js'
 import useFetch from '../../hooks/useFetch.js'
 import { imageUrl, IMAGE_SIZES } from '../../utils/imageUrl.js'
 import TintedImage from '../common/TintedImage.jsx'
@@ -11,10 +13,31 @@ import useNarration, { useVoice } from './useNarration.js'
 import useHoloTilt from './useHoloTilt.js'
 import BootScene from './scenes/BootScene.jsx'
 import HookScene from './scenes/HookScene.jsx'
+import ArchiveScene from './scenes/ArchiveScene.jsx'
+import FilterScene from './scenes/FilterScene.jsx'
+import CastScene from './scenes/CastScene.jsx'
+import DossierScene from './scenes/DossierScene.jsx'
 import CloseScene from './scenes/CloseScene.jsx'
 
-// Scenes that exist in the site right now; others in the script are skipped.
-const SCENE_COMPONENTS = { boot: BootScene, hook: HookScene, close: CloseScene }
+// Lab (Recharts) and Network (React Flow) scenes are separate chunks; they are
+// preloaded as soon as the stage opens so they are ready when their turn comes.
+const loadLabScene = () => import('./scenes/LabScene.jsx')
+const loadNetworkScene = () => import('./scenes/NetworkScene.jsx')
+const LabScene = lazy(loadLabScene)
+const NetworkScene = lazy(loadNetworkScene)
+
+// Scenes that exist in the site right now; any other scene in the script is skipped.
+const SCENE_COMPONENTS = {
+  boot: BootScene,
+  hook: HookScene,
+  archive: ArchiveScene,
+  filter: FilterScene,
+  cast: CastScene,
+  dossier: DossierScene,
+  lab: LabScene,
+  network: NetworkScene,
+  close: CloseScene,
+}
 const AVAILABLE_SCENES = SCENES.filter((scene) => scene.id in SCENE_COMPONENTS)
 
 // Same default theme query as the list pages and status bar (shared cache).
@@ -60,6 +83,16 @@ function HoloStage({ onClose }) {
     () => Object.values(productions.data ?? {}).map((entry) => entry.media).filter(Boolean),
     [productions.data],
   )
+  // Warm up later scenes: their code chunks and their TMDB data (the request
+  // cache keeps the promises, so the scenes find the data ready).
+  useEffect(() => {
+    const controller = new AbortController()
+    loadLabScene()
+    loadNetworkScene()
+    fetchCastPreview(controller.signal).catch(() => {})
+    fetchDossierRecord(getEntityBySlug('hal-9000'), controller.signal).catch(() => {})
+    return () => controller.abort()
+  }, [])
   useEffect(() => {
     media.forEach((item) => {
       const src = imageUrl(item.backdrop_path, IMAGE_SIZES.backdrop)
@@ -180,7 +213,9 @@ function HoloStage({ onClose }) {
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.35 }}
                     >
-                      <Scene lineIndex={narration.lineIndex} media={media} counts={counts.data} onEnter={onClose} reduceMotion={reduceMotion} />
+                      <Suspense fallback={<p className="label-mono text-holo">Loading module…</p>}>
+                        <Scene lineIndex={narration.lineIndex} media={media} counts={counts.data} onEnter={onClose} reduceMotion={reduceMotion} />
+                      </Suspense>
                     </motion.div>
                   </AnimatePresence>
                 </section>

@@ -70,9 +70,9 @@ export const SCENES = [
   },
 ]
 
-/** Reading time for a sentence when it cannot be spoken (~150 words per minute). */
+/** Reading time for a sentence when it cannot be spoken (~165 words per minute). */
 export function estimateMs(text) {
   const words = text.trim().split(/\s+/).length
   const pauses = (text.match(/\.\.\./g) ?? []).length
-  return Math.max(1400, words * 400 + pauses * 450)
+  return Math.max(1300, words * 360 + pauses * 400)
 }

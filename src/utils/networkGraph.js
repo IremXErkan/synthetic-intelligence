@@ -5,6 +5,8 @@
 //   source edges      → entity → production, backed by a verified TMDB ID (solid)
 //   editorial edges   → entity ↔ entity from `related` (dashed)
 
+import { ENTITIES } from '../data/entities.js'
+
 const ENTITY_RADIUS = 250
 const PRODUCTION_RADIUS = 460
 
@@ -64,4 +66,17 @@ export function buildNetworkGraph(entities) {
   }
 
   return { nodes, edges }
+}
+
+/** The graph of the real dossier catalog (shared by /network and the intro). */
+export const CATALOG_GRAPH = buildNetworkGraph(ENTITIES)
+
+/** TMDB production records keyed by production node id, from fetchCatalogProductions data. */
+export function mediaByProductionNode(catalogData) {
+  const map = {}
+  for (const entity of ENTITIES) {
+    const media = catalogData?.[entity.slug]?.media
+    if (media) map[productionNodeId(entity.media)] = media
+  }
+  return map
 }

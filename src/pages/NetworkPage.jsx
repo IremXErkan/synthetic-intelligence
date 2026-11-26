@@ -1,26 +1,19 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { ReactFlow, ReactFlowProvider, useReactFlow } from '@xyflow/react'
-import '@xyflow/react/dist/base.css' // React Flow's minimal structural CSS (no theme); all visuals are Tailwind
+import { ReactFlowProvider, useReactFlow } from '@xyflow/react'
 import { useReducedMotion } from 'framer-motion'
 import { Maximize2, ZoomIn, ZoomOut } from 'lucide-react'
 import { fetchCatalogProductions } from '../services/catalog.js'
 import useFetch from '../hooks/useFetch.js'
 import useDocumentTitle from '../hooks/useDocumentTitle.js'
-import { buildNetworkGraph, entityNodeId, productionNodeId } from '../utils/networkGraph.js'
+import { CATALOG_GRAPH, entityNodeId, mediaByProductionNode, productionNodeId } from '../utils/networkGraph.js'
 import { getTitle, getYear } from '../utils/media.js'
 import { ENTITIES, ENTITY_TYPES, getEntityBySlug, getEntityCode } from '../data/entities.js'
 import PageShell from '../components/layout/PageShell.jsx'
 import HudPanel from '../components/common/HudPanel.jsx'
 import { ThreatBadge } from '../components/common/Badge.jsx'
-import { EntityNode, ProductionNode } from '../components/entity/NetworkNodes.jsx'
+import NetworkCanvas from '../components/entity/NetworkCanvas.jsx'
 
-const NODE_TYPES = { entity: EntityNode, production: ProductionNode }
-const EDGE_STYLES = {
-  source: { stroke: '#22d3ee', strokeWidth: 1.5 },
-  editorial: { stroke: '#a78bfa', strokeWidth: 1.5, strokeDasharray: '6 5' },
-}
-const BASE_GRAPH = buildNetworkGraph(ENTITIES)
 const BUTTON_CLASS = 'chamfer grid size-9 place-items-center bg-line-strong text-ink [--cut:6px] hover:bg-signal/20 hover:text-signal'
 
 function Legend() {
@@ -50,7 +43,7 @@ function Legend() {
 
 /** Details of the selected node, with a link to its page. */
 function SelectionPanel({ selectedId, mediaByKey }) {
-  const node = BASE_GRAPH.nodes.find((n) => n.id === selectedId)
+  const node = CATALOG_GRAPH.nodes.find((n) => n.id === selectedId)
   if (!node) {
     return <p className="text-sm text-ink-muted">Select an entity in the list or click a node to inspect it. Double-click a node to open its page.</p>
   }
@@ -105,52 +98,11 @@ function NetworkGraph() {
   const [selectedId, setSelectedId] = useState(null)
 
   // TMDB production records keyed by production node id.
-  const mediaByKey = useMemo(() => {
-    const map = {}
-    for (const entity of ENTITIES) {
-      const media = productions.data?.[entity.slug]?.media
-      if (media) map[productionNodeId(entity.media)] = media
-    }
-    return map
-  }, [productions.data])
-
-  // Selection highlights the node and its neighbours; everything else dims.
-  const neighbours = useMemo(() => {
-    if (!selectedId) return null
-    const ids = new Set([selectedId])
-    BASE_GRAPH.edges.forEach((edge) => {
-      if (edge.source === selectedId) ids.add(edge.target)
-      if (edge.target === selectedId) ids.add(edge.source)
-    })
-    return ids
-  }, [selectedId])
-
-  const nodes = useMemo(
-    () =>
-      BASE_GRAPH.nodes.map((node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          media: node.type === 'production' ? mediaByKey[node.id] : undefined,
-          active: node.id === selectedId,
-          dimmed: Boolean(neighbours && !neighbours.has(node.id)),
-        },
-      })),
-    [mediaByKey, selectedId, neighbours],
-  )
-
-  const edges = useMemo(
-    () =>
-      BASE_GRAPH.edges.map((edge) => {
-        const connected = !selectedId || edge.source === selectedId || edge.target === selectedId
-        return { ...edge, type: 'straight', style: { ...EDGE_STYLES[edge.data.kind], opacity: connected ? 1 : 0.15 } }
-      }),
-    [selectedId],
-  )
+  const mediaByKey = useMemo(() => mediaByProductionNode(productions.data), [productions.data])
 
   const focusNode = (id) => {
     setSelectedId(id)
-    const node = BASE_GRAPH.nodes.find((n) => n.id === id)
+    const node = CATALOG_GRAPH.nodes.find((n) => n.id === id)
     if (node) setCenter(node.position.x + 50, node.position.y + 20, { zoom: 1.1, duration: reduceMotion ? 0 : 500 })
   }
 
@@ -190,24 +142,7 @@ function NetworkGraph() {
           role="figure"
           aria-label="Network graph of dossiers, their productions and editorial relations. Use the entity list for keyboard access."
         >
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            nodeTypes={NODE_TYPES}
-            onNodeClick={(_, node) => setSelectedId(node.id)}
-            onNodeDoubleClick={(_, node) => openNode(node)}
-            onPaneClick={() => setSelectedId(null)}
-            fitView
-            fitViewOptions={{ padding: 0.15 }}
-            minZoom={0.3}
-            maxZoom={2}
-            nodesDraggable={false}
-            nodesConnectable={false}
-            elementsSelectable={false}
-            zoomOnScroll={false}
-            zoomOnDoubleClick={false} // double-click opens a node's page instead
-            preventScrolling={false}
-          />
+          <NetworkCanvas mediaByKey={mediaByKey} selectedId={selectedId} onSelect={setSelectedId} onOpen={openNode} />
           <div className="absolute right-3 top-3 z-10 flex flex-col gap-2">
             <button type="button" className={BUTTON_CLASS} onClick={() => zoomIn()} aria-label="Zoom in">
               <ZoomIn className="size-4" aria-hidden="true" />
