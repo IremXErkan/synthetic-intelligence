@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import { MotionConfig, motion } from 'framer-motion'
 import Navbar from './components/layout/Navbar.jsx'
@@ -6,6 +6,10 @@ import Footer from './components/layout/Footer.jsx'
 import { SkeletonGrid } from './components/common/Skeleton.jsx'
 import HomePage from './pages/HomePage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import { hasSeenIntro, markIntroSeen } from './components/intro/introStorage.js'
+
+// The intro (and everything it pulls in) is its own chunk, loaded only when shown.
+const IntroOverlay = lazy(() => import('./components/intro/IntroOverlay.jsx'))
 
 // Route-level code splitting: each page (and heavy libraries such as Recharts
 // on /lab) is downloaded only when it is first visited. Home and 404 stay in
@@ -32,6 +36,15 @@ function PageLoading() {
 function App() {
   const { pathname } = useLocation()
 
+  // Boot Sequence intro: only on a first visit that lands on "/" (deep links skip it).
+  const [introOpen, setIntroOpen] = useState(() => pathname === '/' && !hasSeenIntro())
+  const closeIntro = () => {
+    markIntroSeen()
+    setIntroOpen(false)
+    // Hand focus to the page once the dialog is gone.
+    requestAnimationFrame(() => document.getElementById('main')?.focus())
+  }
+
   // New page → start at the top (filter changes keep the scroll position, since
   // they only change the query string, not the pathname).
   useEffect(() => {
@@ -41,7 +54,14 @@ function App() {
   return (
     // reducedMotion="user": animations are skipped when the OS asks for reduced motion.
     <MotionConfig reducedMotion="user">
-      <div className="flex min-h-screen flex-col">
+      {introOpen && (
+        <Suspense fallback={<div className="fixed inset-0 z-[100] bg-void" />}>
+          <IntroOverlay onClose={closeIntro} />
+        </Suspense>
+      )}
+
+      {/* While the intro dialog is open the page behind it is inert (no focus, not read out). */}
+      <div className="flex min-h-screen flex-col" inert={introOpen}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-signal focus:px-4 focus:py-2 focus:text-void"
@@ -54,7 +74,8 @@ function App() {
         <motion.main
           id="main"
           key={pathname}
-          className="flex-1"
+          tabIndex={-1}
+          className="flex-1 focus:outline-none"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -77,7 +98,7 @@ function App() {
           </Suspense>
         </motion.main>
 
-        <Footer />
+        <Footer onReplayIntro={() => setIntroOpen(true)} />
       </div>
     </MotionConfig>
   )

@@ -31,6 +31,17 @@
   --color-threat-critical: #f87171;
 
   --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+  /* Intro voice waveform bars */
+  @keyframes voice {
+    0%,
+    100% {
+      transform: scaleY(0.35);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
   @keyframes shimmer {
     0% {
       background-position: -200% 0;
@@ -102,6 +113,33 @@
     calc(100% - var(--cut)) 100%,
     0 100%,
     0 var(--cut)
+  );
+}
+
+/*
+ * Chamfered outline only (a hollow ring), for translucent "glass" panels where a
+ * filled frame layer would show through the glass. evenodd cuts the inner shape out.
+ */
+@utility chamfer-ring {
+  --cut: 14px;
+  --ring: 1.5px;
+  --ring-diag: calc(var(--ring) * 0.42); /* ring offset along the 45° cut */
+  clip-path: polygon(
+    evenodd,
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut),
+    var(--cut) 0,
+    calc(var(--cut) + var(--ring-diag)) var(--ring),
+    var(--ring) calc(var(--cut) + var(--ring-diag)),
+    var(--ring) calc(100% - var(--ring)),
+    calc(100% - var(--cut) - var(--ring-diag)) calc(100% - var(--ring)),
+    calc(100% - var(--ring)) calc(100% - var(--cut) - var(--ring-diag)),
+    calc(100% - var(--ring)) var(--ring),
+    calc(var(--cut) + var(--ring-diag)) var(--ring)
   );
 }
 

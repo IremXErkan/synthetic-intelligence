@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 // stored in /public so it is served by this site (no hotlinking).
 const TMDB_LOGO_URL = '/tmdb-logo.svg'
 
-function Footer() {
+function Footer({ onReplayIntro }) {
   return (
     <footer className="mt-24 border-t border-line bg-panel/60">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_auto] md:items-center">
@@ -21,7 +21,14 @@ function Footer() {
               Methodology
             </Link>
           </p>
-          <p className="label-mono text-[0.625rem]">SE 3355 Web Programming · Midterm Project</p>
+          <p className="label-mono flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.625rem]">
+            <span>SE 3355 Web Programming · Midterm Project</span>
+            {onReplayIntro && (
+              <button type="button" onClick={onReplayIntro} className="text-signal hover:underline">
+                Replay intro
+              </button>
+            )}
+          </p>
         </div>
 
         <div className="flex flex-col items-start gap-3 md:items-end">

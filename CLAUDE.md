@@ -389,10 +389,27 @@ Gereksiz soyutlama yapma. Bir şey tek yerde kullanılıyorsa ayrı dosyaya çı
 2. Classified Dossier tasarımı
 3. Comparison Lab
 4. Cila ve animasyonlar
-5. Network (kesilebilir)
+5. Network (kesilebilir) — tamamlandı
+6. Boot Sequence intro (26.11'de eklendi)
+7. Archive Terminal — **opsiyonel**, sadece intro tamamen bittikten sonra ve zaman kalırsa
 
-### Kapsam kararı: Archive Terminal (26.11'de eklendi)
-Kullanıcı onayıyla eklenen ekstra özellik; Network'ten sonra yapılır.
+### Kapsam kararı: Boot Sequence intro (26.11'de eklendi)
+Kullanıcı onayıyla eklenen ekstra özellik. §13'teki "aşırı animasyon" maddesiyle
+çelişmez çünkü isteğe bağlı, her an atlanabilir ve `prefers-reduced-motion`'a uyar.
+- Siteye **sadece `/` adresinden ilk girişte** açılır; doğrudan linkler (`/movies`,
+  `/entity/...` vb.) intro'yu atlar. Açılış ekranında **[SKIP INTRO]** butonu vardır.
+  İzlenince/atlanınca tekrar otomatik açılmaz; footer'da "Replay intro".
+- Holografik panel görünümü (referans: Vietnamca oyun HUD'u, `design-refs/qBo10…jpg`).
+- Ses: Web Speech API (`speechSynthesis`); ses dosyası/video/API key yok. Ses yoksa
+  intro altyazılı ve sessiz devam eder.
+- Sahnelerde sitenin **gerçek** component'leri ve canlı TMDB verisi kullanılır; sahte
+  veri, sahte grafik, film sahnesi veya video yok.
+- Kod `src/components/intro/` altında, `React.lazy` ile ayrı parça.
+- **27.11 akşamı** intro hâlâ bitmemişse eksik sahneler çıkarılır, çalışan kısmıyla
+  bırakılır; intro işi 28.11'e taşınmaz.
+
+### Kapsam kararı: Archive Terminal (26.11'de eklendi) — OPSİYONEL
+Sadece intro tamamen bittikten sonra ve zaman kalırsa yapılır.
 - Komut satırı tarzı arama/gezinme paneli. **Ctrl+K** ile açılır, **Esc** ile kapanır,
   **↑/↓** ok tuşlarıyla komut geçmişi.
 - **Sabit komut listesi** + `help` komutu. Serbest metin yorumlanmaz; bilinmeyen komut
@@ -403,8 +420,9 @@ Kullanıcı onayıyla eklenen ekstra özellik; Network'ten sonra yapılır.
   sahte çıktı üretmez.
 
 ### Özellik dondurma
-- **28.11 akşamı özellik dondurma.** Terminal o akşama kadar tam çalışır halde değilse
-  **tamamen çıkarılır**, yarım bırakılmaz.
+- **28.11 öğlen:** Terminal o saate kadar tam çalışır halde değilse **tamamen çıkarılır**,
+  yarım bırakılmaz.
+- **28.11 öğleden sonra:** README ve son kontroller; yeni özellik yok.
 - **29.11:** sadece kontrol, README düzeltmeleri ve teslim; yeni özellik yok.
 
 ---
