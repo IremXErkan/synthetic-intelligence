@@ -97,11 +97,38 @@ Rules the project follows:
 - Scores are a **subjective project assessment**, not a measurement; the Lab and About pages say so.
 - No fake data: if a request fails, the page shows an error state instead of placeholder content.
 
+### Why two layers
+- **TMDB has the facts but not the theme.** It knows titles, casts and release dates, but it has no
+  field such as "entity type" or "threat level", and no way to compare HAL 9000 with TARS. That
+  analysis has to be written by hand, so it lives in its own small catalog.
+- **Keeping them apart keeps the site honest.** Live data is never mixed with opinion: a reader can
+  always tell which numbers come from TMDB and which are the project's own judgement.
+- **The catalog stays small and correct.** Because it stores only IDs, nothing in it goes out of
+  date — posters, titles and cast always come from the current TMDB record.
+
 ### How the theme is defined
 `src/config/themeKeywords.js` holds the keyword IDs, each one looked up with `/search/keyword` and
 checked with `/keyword/{id}` (several noisy keywords were rejected and are listed in the file).
 To reduce noise, lists use a minimum vote count of 50 (switchable in the filters), and the series
 list excludes TMDB's *Kids* genre.
+
+### TMDB API endpoints used
+
+All requests go to [TMDB API v3](https://developer.themoviedb.org/docs/getting-started) with
+`language=en-US` (and `include_adult=false` on lists); every endpoint was checked with a real request before it was used.
+
+| Endpoint | Used for |
+|---|---|
+| `GET /discover/movie`, `GET /discover/tv` | Theme lists (keyword filter, genre, decade, sort, pages), archive counts |
+| `GET /search/movie`, `GET /search/tv` | Search on the list pages (the home search box opens them) and in the terminal |
+| `GET /movie/{id}`, `GET /tv/{id}` + `append_to_response` | Detail pages: `credits` (films) / `aggregate_credits` (series — plain TV credits only cover the latest season), `videos`, `recommendations`, `keywords` |
+| `GET /movie/{id}/credits`, `GET /tv/{id}/aggregate_credits` | Cast Registry |
+| `GET /person/{id}` + `combined_credits` | Person page |
+| `GET /genre/movie/list`, `GET /genre/tv/list` | Genre filter |
+| `https://image.tmdb.org/t/p/{size}{path}` | Posters, backdrops and profile photos |
+
+`/search/keyword` and `/keyword/{id}` were used once, during development, to find and verify the
+theme keyword IDs.
 
 ---
 
