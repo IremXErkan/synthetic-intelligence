@@ -39,7 +39,7 @@ function AboutPage() {
 
   return (
     <PageShell
-      code="SEC-06"
+      code="SEC-07"
       eyebrow="Archive Protocol"
       title="About & Methodology"
       description="What this archive is, where its data comes from, and how the editorial analysis is made."

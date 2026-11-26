@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
-import { getMediaDetails } from '../services/tmdb.js'
+import { fetchCatalogProductions } from '../services/catalog.js'
 import useFetch from '../hooks/useFetch.js'
 import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import { getReleaseDate } from '../utils/media.js'
@@ -27,22 +27,6 @@ const SORT_OPTIONS = [
   { value: 'date', label: 'First appearance (oldest first)' },
 ]
 
-/**
- * Live TMDB record for every dossier's production (10 requests, cached and
- * shared with the dossier pages). allSettled: one failure only affects one card.
- */
-async function fetchAllProductions(signal) {
-  const results = await Promise.allSettled(
-    ENTITIES.map((entity) => getMediaDetails(entity.media.type, entity.media.tmdbId, {}, { signal })),
-  )
-  if (signal.aborted) throw new DOMException('Aborted', 'AbortError')
-  return Object.fromEntries(
-    ENTITIES.map((entity, i) => [
-      entity.slug,
-      results[i].status === 'fulfilled' ? { media: results[i].value } : { error: results[i].reason },
-    ]),
-  )
-}
 
 function useEntityFilters() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -73,7 +57,7 @@ function useEntityFilters() {
 function EntitiesPage() {
   useDocumentTitle('Intelligence Database')
   const { filters, write } = useEntityFilters()
-  const productions = useFetch(fetchAllProductions)
+  const productions = useFetch(fetchCatalogProductions)
 
   const visible = useMemo(() => {
     const needle = filters.q.toLowerCase()

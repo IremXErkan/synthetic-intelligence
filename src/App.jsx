@@ -15,6 +15,7 @@ const SeriesPage = lazy(() => import('./pages/SeriesPage.jsx'))
 const CastPage = lazy(() => import('./pages/CastPage.jsx'))
 const EntitiesPage = lazy(() => import('./pages/EntitiesPage.jsx'))
 const LabPage = lazy(() => import('./pages/LabPage.jsx'))
+const NetworkPage = lazy(() => import('./pages/NetworkPage.jsx'))
 const AboutPage = lazy(() => import('./pages/AboutPage.jsx'))
 const MediaDetailPage = lazy(() => import('./pages/MediaDetailPage.jsx'))
 const PersonDetailPage = lazy(() => import('./pages/PersonDetailPage.jsx'))
@@ -66,6 +67,7 @@ function App() {
             <Route path="/cast" element={<CastPage />} />
             <Route path="/entities" element={<EntitiesPage />} />
             <Route path="/lab" element={<LabPage />} />
+            <Route path="/network" element={<NetworkPage />} />
             <Route path="/media/:type/:id" element={<MediaDetailPage />} />
             <Route path="/person/:id" element={<PersonDetailPage />} />
             <Route path="/entity/:slug" element={<EntityDetailPage />} />

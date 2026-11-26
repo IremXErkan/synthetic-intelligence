@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowRight, Clapperboard, Database, FlaskConical, Tv, Users } from 'lucide-react'
+import { ArrowRight, Clapperboard, Database, FlaskConical, Network, Tv, Users } from 'lucide-react'
 import { discoverTheme } from '../../services/tmdb.js'
 import useFetch from '../../hooks/useFetch.js'
 import { ENTITIES } from '../../data/entities.js'
@@ -65,6 +65,14 @@ const SECTIONS = [
     text: 'Compare two entities side by side.',
     meta: 'Editorial scores · radar view',
   },
+  {
+    to: '/network',
+    code: 'SEC-06',
+    title: 'Network',
+    icon: Network,
+    text: 'How dossiers and productions connect.',
+    meta: 'TMDB links · editorial relations',
+  },
 ]
 
 function QuickAccess() {
@@ -73,7 +81,7 @@ function QuickAccess() {
       <h2 id="quick-access-title" className="label-mono mb-4 text-signal">
         Archive sectors
       </h2>
-      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {SECTIONS.map(({ to, code, title, icon: Icon, text, meta }) => (
           <li key={to}>
             <Link to={to} className="group block h-full">

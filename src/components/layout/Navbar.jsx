@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { to: '/cast', label: 'Cast' },
   { to: '/entities', label: 'Entities' },
   { to: '/lab', label: 'Lab' },
+  { to: '/network', label: 'Network' },
   { to: '/about', label: 'About' },
 ]
 
@@ -78,7 +79,7 @@ function Navbar() {
         </Link>
 
         {/* Desktop links */}
-        <ul className="hidden items-center gap-6 md:flex">
+        <ul className="hidden items-center gap-6 lg:flex">
           {NAV_LINKS.map((link) => {
             const state = getLinkState(pathname, link.to)
             return (
@@ -94,7 +95,7 @@ function Navbar() {
         {/* Mobile toggle */}
         <button
           type="button"
-          className="rounded p-2 text-ink-muted hover:text-ink md:hidden"
+          className="rounded p-2 text-ink-muted hover:text-ink lg:hidden"
           aria-expanded={menuOpen}
           aria-controls="mobile-menu"
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
@@ -107,7 +108,7 @@ function Navbar() {
       <StatusBar />
 
       {menuOpen && (
-        <ul id="mobile-menu" className="border-t border-line bg-panel py-2 md:hidden">
+        <ul id="mobile-menu" className="border-t border-line bg-panel py-2 lg:hidden">
           {NAV_LINKS.map((link) => {
             const state = getLinkState(pathname, link.to)
             return (
