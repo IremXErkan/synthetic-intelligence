@@ -1,9 +1,11 @@
 // Narration script for the Boot Sequence. Each scene is a list of sentences;
 // the next sentence starts when the previous one has been spoken (or, without
 // speech, after an estimated reading time). `minMs` keeps short scenes on screen
-// long enough for their visuals. Numbers come live from TMDB via `context`.
+// long enough for their visuals. Sentences are fixed text so they can be
+// recorded; each line can have an audio file at /narration/<scene id>-<n>.mp3.
 
-const formatCount = (value) => value.toLocaleString('en-US')
+/** Recorded narration file for a line (n starts at 1), e.g. /narration/hook-2.mp3. */
+export const narrationFile = (sceneId, lineIndex) => `/narration/${sceneId}-${lineIndex + 1}.mp3`
 
 export const SCENES = [
   {
@@ -23,11 +25,11 @@ export const SCENES = [
     id: 'archive',
     chapter: 'The archive',
     minMs: 7000,
-    lines: ({ counts }) => [
+    // Fixed sentences so they can be recorded; the live counts are shown on
+    // screen by the scene's counters instead of being spoken.
+    lines: () => [
       'This archive tracks synthetic intelligence across cinema.',
-      counts
-        ? `${formatCount(counts.movies)} films. ${formatCount(counts.series)} series.`
-        : 'Films and series from across the screen.',
+      'Hundreds of films and series.',
       'All data retrieved live.',
     ],
   },

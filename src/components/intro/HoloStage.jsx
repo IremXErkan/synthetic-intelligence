@@ -9,8 +9,8 @@ import { imageUrl, IMAGE_SIZES } from '../../utils/imageUrl.js'
 import TintedImage from '../common/TintedImage.jsx'
 import { ChapterRail, VoiceWave } from './IntroControls.jsx'
 import KeyHint from '../common/KeyHint.jsx'
-import { SCENES } from './script.js'
-import useNarration, { useVoice } from './useNarration.js'
+import { SCENES, narrationFile } from './script.js'
+import useNarration, { hasRecordedNarration, useVoice } from './useNarration.js'
 import useHoloTilt from './useHoloTilt.js'
 import BootScene from './scenes/BootScene.jsx'
 import HookScene from './scenes/HookScene.jsx'
@@ -77,7 +77,23 @@ function HoloStage({ onClose }) {
   const counts = useFetch(fetchArchiveCounts)
   const context = useMemo(() => ({ counts: counts.data }), [counts.data])
 
-  const narration = useNarration({ scenes: AVAILABLE_SCENES, context, paused, muted, voice })
+  // Recorded narration (same voice for everyone) when the files are deployed;
+  // otherwise the browser's own voice, otherwise captions only.
+  const recordings = useFetch(hasRecordedNarration)
+  const recorded = recordings.data === true
+  const narration = useNarration({ scenes: AVAILABLE_SCENES, context, paused, muted, voice, recorded })
+
+  // Warm the browser cache with every recorded line so playback starts at once.
+  useEffect(() => {
+    if (!recorded) return
+    AVAILABLE_SCENES.forEach((scene) =>
+      scene.lines(context).forEach((_, index) => {
+        const audio = new Audio()
+        audio.preload = 'auto'
+        audio.src = narrationFile(scene.id, index)
+      }),
+    )
+  }, [recorded, context])
   const scene = AVAILABLE_SCENES[narration.sceneIndex]
   const Scene = SCENE_COMPONENTS[scene.id]
 
@@ -234,7 +250,13 @@ function HoloStage({ onClose }) {
                   <div className="flex items-center gap-4 px-3 py-2">
                     <VoiceWave active={narration.speaking} />
                     <p className="truncate text-sm text-ink">
-                      {!voice ? 'No speech voice available · captions only' : muted ? 'Narrator muted · captions only' : `Narrator · ${voice.name}`}
+                      {muted
+                        ? 'Narrator muted · captions only'
+                        : recorded
+                          ? 'Narrator · recorded voice'
+                          : voice
+                            ? `Narrator · ${voice.name}`
+                            : 'No speech voice available · captions only'}
                     </p>
                   </div>
                 </footer>

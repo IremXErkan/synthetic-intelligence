@@ -168,3 +168,94 @@ describe('useNarration with speech', () => {
     expect(cancel).toHaveBeenCalled()
   })
 })
+
+describe('useNarration with recorded files', () => {
+  let players
+  let useNarration
+  class FakeAudio {
+    constructor(src) {
+      this.src = src
+      this.paused = false
+      players.push(this)
+    }
+    play() {
+      return Promise.resolve()
+    }
+    pause() {
+      this.paused = true
+    }
+  }
+
+  beforeEach(async () => {
+    vi.useFakeTimers()
+    players = []
+    vi.stubGlobal('Audio', FakeAudio)
+    useNarration = (await import('./useNarration.js')).default
+  })
+
+  afterEach(() => {
+    cleanup()
+    vi.unstubAllGlobals()
+    vi.useRealTimers()
+  })
+
+  const setup = (props = {}) =>
+    renderHook(
+      (p) => useNarration({ scenes: SCENES, context: {}, paused: false, muted: false, voice: null, recorded: true, ...p }),
+      { initialProps: props },
+    )
+
+  it('plays the file of each line and advances when it ends', () => {
+    const { result } = setup()
+    advance(0)
+    expect(players.map((p) => p.src)).toEqual(['/narration/a-1.mp3'])
+
+    act(() => players[0].onplaying())
+    expect(result.current.speaking).toBe(true)
+
+    act(() => players[0].onended())
+    expect(result.current.caption).toBe('Four.')
+    advance(150)
+    expect(players.at(-1).src).toBe('/narration/a-2.mp3')
+  })
+
+  it('falls back to captions if a file cannot be played', () => {
+    const { result } = setup()
+    advance(0)
+    act(() => players[0].onerror())
+    advance(1299)
+    expect(result.current.caption).toBe('One two three.')
+    advance(1)
+    expect(result.current.caption).toBe('Four.')
+  })
+
+  it('plays nothing when muted and stops the file on unmount', () => {
+    const muted = setup({ muted: true })
+    advance(0)
+    expect(players).toHaveLength(0)
+    muted.unmount()
+
+    const { unmount } = setup()
+    advance(0)
+    unmount()
+    expect(players[0].paused).toBe(true)
+  })
+})
+
+describe('hasRecordedNarration', () => {
+  afterEach(() => vi.unstubAllGlobals())
+  const respond = (init) => vi.stubGlobal('fetch', vi.fn(() => init))
+
+  it('is true only for a real audio file', async () => {
+    const { hasRecordedNarration } = await import('./useNarration.js')
+    respond(Promise.resolve(new Response(null, { status: 200, headers: { 'content-type': 'audio/mpeg' } })))
+    expect(await hasRecordedNarration()).toBe(true)
+
+    // A SPA host answers a missing file with index.html.
+    respond(Promise.resolve(new Response(null, { status: 200, headers: { 'content-type': 'text/html' } })))
+    expect(await hasRecordedNarration()).toBe(false)
+
+    respond(Promise.reject(new TypeError('offline')))
+    expect(await hasRecordedNarration()).toBe(false)
+  })
+})

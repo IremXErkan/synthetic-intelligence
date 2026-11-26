@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { estimateMs } from './script.js'
+import { estimateMs, narrationFile } from './script.js'
 
 const SPEECH_SUPPORTED = typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window
 const END_SAFETY_MS = 2500 // Chrome sometimes never fires `end`; move on anyway
@@ -21,6 +21,28 @@ export function pickVoice(voices) {
   return null
 }
 
+/**
+ * Whether recorded narration files are deployed. Checks the first file's
+ * content type: an SPA host answers a missing file with index.html (200, text/html).
+ */
+export async function hasRecordedNarration(signal) {
+  try {
+    const response = await fetch(narrationFile('boot', 0), { method: 'HEAD', signal })
+    return response.ok && (response.headers.get('content-type') ?? '').startsWith('audio/')
+  } catch (error) {
+    if (error?.name === 'AbortError') throw error
+    return false
+  }
+}
+
+function stopAudio(audioRef) {
+  const audio = audioRef.current
+  if (!audio) return
+  audio.onended = audio.onerror = audio.onplaying = audio.onloadedmetadata = null
+  audio.pause()
+  audioRef.current = null
+}
+
 /** The best English voice; updates when the browser finishes loading its voice list. */
 export function useVoice() {
   const [voice, setVoice] = useState(() => (SPEECH_SUPPORTED ? pickVoice(window.speechSynthesis.getVoices()) : null))
@@ -36,17 +58,20 @@ export function useVoice() {
 }
 
 /**
- * Drives the intro: speaks each sentence and advances when it ends. Without a
- * voice (unsupported, muted or speech error) it advances after an estimated
- * reading time, so the intro always continues, silently but captioned.
+ * Drives the intro: plays each sentence and advances when it ends.
+ * Sources, in order: the recorded file (`recorded`: same voice for everyone),
+ * else the browser's speech engine (`voice`), else silence. Without sound
+ * (muted, unsupported, file or speech error) it advances after an estimated
+ * reading time, so the intro always continues, captioned.
  *
  * Pause cancels speech and restarts the current sentence on resume (Chrome's
  * speechSynthesis.pause() is unreliable).
  */
-export default function useNarration({ scenes, context, paused, muted, voice }) {
+export default function useNarration({ scenes, context, paused, muted, voice, recorded = false }) {
   const [position, setPosition] = useState({ scene: 0, line: 0 })
   const [speakingKey, setSpeakingKey] = useState(null)
   const sceneStartRef = useRef(0)
+  const audioRef = useRef(null)
 
   const scene = scenes[position.scene]
   const lines = scene.lines(context)
@@ -79,9 +104,24 @@ export default function useNarration({ scenes, context, paused, muted, voice }) 
       }
     } else {
       const lead = position.line === 0 ? (scene.leadMs ?? 400) : 150
+      const useRecording = recorded && !muted
       const useVoice = SPEECH_SUPPORTED && voice && !muted
 
       later(() => {
+        if (useRecording) {
+          const audio = new Audio(narrationFile(scene.id, position.line))
+          audioRef.current = audio
+          const fallBack = () => later(nextLine, estimateMs(text)) // missing/blocked file: captions only
+          audio.onplaying = () => setSpeakingKey(key)
+          audio.onended = nextLine
+          audio.onerror = fallBack
+          audio.onloadedmetadata = () => {
+            if (Number.isFinite(audio.duration)) later(nextLine, audio.duration * 1000 + END_SAFETY_MS)
+          }
+          audio.play().catch(fallBack)
+          later(nextLine, estimateMs(text) * 2 + END_SAFETY_MS) // in case nothing ever fires
+          return
+        }
         if (!useVoice) {
           later(nextLine, estimateMs(text))
           return
@@ -101,9 +141,10 @@ export default function useNarration({ scenes, context, paused, muted, voice }) 
     return () => {
       finished = true
       timers.forEach(clearTimeout)
+      stopAudio(audioRef)
       if (SPEECH_SUPPORTED) window.speechSynthesis?.cancel()
     }
-  }, [text, key, paused, muted, voice, scene, scenes.length, position.scene, position.line])
+  }, [text, key, paused, muted, voice, recorded, scene, scenes.length, position.scene, position.line])
 
   const goTo = useCallback((sceneIndex) => setPosition({ scene: sceneIndex, line: 0 }), [])
 

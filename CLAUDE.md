@@ -401,8 +401,11 @@ Kullanıcı onayıyla eklenen ekstra özellik. §13'teki "aşırı animasyon" ma
   `/entity/...` vb.) intro'yu atlar. Açılış ekranında **[SKIP INTRO]** butonu vardır.
   İzlenince/atlanınca tekrar otomatik açılmaz; footer'da "Replay intro".
 - Holografik panel görünümü (referans: Vietnamca oyun HUD'u, `design-refs/qBo10…jpg`).
-- Ses: Web Speech API (`speechSynthesis`); ses dosyası/video/API key yok. Ses yoksa
-  intro altyazılı ve sessiz devam eder.
+- Ses (26.11'de kullanıcı kararıyla güncellendi): herkes aynı sesi duysun diye
+  **kayıtlı anlatım dosyaları** `public/narration/<sahne id>-<n>.mp3` (kullanıcı bir TTS
+  sitesinde üretir, kullanım koşullarını kendisi kontrol eder). Dosyalar yoksa Web Speech
+  API'ye, o da yoksa altyazılı sessiz moda düşer. Video/API key yok. Cümleler sabit metin;
+  canlı TMDB sayıları seslendirilmez, ekranda sayaç olarak gösterilir.
 - Sahnelerde sitenin **gerçek** component'leri ve canlı TMDB verisi kullanılır; sahte
   veri, sahte grafik, film sahnesi veya video yok.
 - Kod `src/components/intro/` altında, `React.lazy` ile ayrı parça.
