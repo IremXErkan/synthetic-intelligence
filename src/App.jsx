@@ -1,19 +1,32 @@
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
 import { MotionConfig, motion } from 'framer-motion'
 import Navbar from './components/layout/Navbar.jsx'
 import Footer from './components/layout/Footer.jsx'
+import { SkeletonGrid } from './components/common/Skeleton.jsx'
 import HomePage from './pages/HomePage.jsx'
-import MoviesPage from './pages/MoviesPage.jsx'
-import SeriesPage from './pages/SeriesPage.jsx'
-import CastPage from './pages/CastPage.jsx'
-import EntitiesPage from './pages/EntitiesPage.jsx'
-import LabPage from './pages/LabPage.jsx'
-import AboutPage from './pages/AboutPage.jsx'
-import MediaDetailPage from './pages/MediaDetailPage.jsx'
-import PersonDetailPage from './pages/PersonDetailPage.jsx'
-import EntityDetailPage from './pages/EntityDetailPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
+
+// Route-level code splitting: each page (and heavy libraries such as Recharts
+// on /lab) is downloaded only when it is first visited. Home and 404 stay in
+// the main bundle because they are the most common entry points.
+const MoviesPage = lazy(() => import('./pages/MoviesPage.jsx'))
+const SeriesPage = lazy(() => import('./pages/SeriesPage.jsx'))
+const CastPage = lazy(() => import('./pages/CastPage.jsx'))
+const EntitiesPage = lazy(() => import('./pages/EntitiesPage.jsx'))
+const LabPage = lazy(() => import('./pages/LabPage.jsx'))
+const AboutPage = lazy(() => import('./pages/AboutPage.jsx'))
+const MediaDetailPage = lazy(() => import('./pages/MediaDetailPage.jsx'))
+const PersonDetailPage = lazy(() => import('./pages/PersonDetailPage.jsx'))
+const EntityDetailPage = lazy(() => import('./pages/EntityDetailPage.jsx'))
+
+function PageLoading() {
+  return (
+    <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <SkeletonGrid count={5} label="Loading page" />
+    </div>
+  )
+}
 
 function App() {
   const { pathname } = useLocation()
@@ -45,6 +58,7 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.2, ease: 'easeOut' }}
         >
+          <Suspense fallback={<PageLoading />}>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/movies" element={<MoviesPage />} />
@@ -58,6 +72,7 @@ function App() {
             <Route path="/about" element={<AboutPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
+          </Suspense>
         </motion.main>
 
         <Footer />
