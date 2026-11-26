@@ -150,6 +150,19 @@ theme keyword IDs.
 
 <img src="docs/screenshots/mobile-dossier.png" alt="Dossier page on a phone" width="300">
 
+### Boot Sequence intro, scene by scene
+
+Ten scenes built from the site's real components and live TMDB data, with a recorded narrator and
+captions (*Replay intro* in the footer of the live site).
+
+| 1 · System boot | 2 · Origin |
+|---|---|
+| ![Intro scene 1, system boot](docs/screenshots/intro-boot.png) | ![Intro scene 2, live TMDB stills in the HUD rings](docs/screenshots/intro-origin.png) |
+
+| 3 · The archive (live counts) | 9 · Terminal |
+|---|---|
+| ![Intro scene 3, live archive counts and posters](docs/screenshots/intro-archive.png) | ![Intro scene 9, the Archive Terminal running a real command](docs/screenshots/intro-terminal.png) |
+
 ---
 
 ## Tech stack
