@@ -3,7 +3,7 @@
 Canlı site: https://synthetic-intelligence-khaki.vercel.app/
 
 ## Hazırlık (sunumdan önce, 2 dk)
-- [ ] Siteyi **Edge**'de aç (Natural ses için). Ses açık, tarayıcı zoom %100.
+- [ ] Siteyi aç, **ses açık**, tarayıcı zoom %100. (Anlatım kayıtlı ses dosyası; her tarayıcıda aynı.)
 - [ ] Intro baştan açılsın diye konsolda: `localStorage.removeItem('si.introSeen')` → sayfayı yenile.
   (Ya da footer'daki **Replay intro** butonu.)
 - [ ] İkinci sekmede: `/movies` hazır dursun (intro uzarsa doğrudan geçmek için).
@@ -14,7 +14,7 @@ Canlı site: https://synthetic-intelligence-khaki.vercel.app/
 
 | Süre | Nerede | Ne yap / ne söyle | Ödevin hangi şartı |
 |---|---|---|---|
-| 0:00–0:25 | `/` ilk giriş | **Boot Sequence**: INITIALIZE → 2–3 sahne izlet → **Esc** ile geç. "Sahnelerde sitenin gerçek component'leri ve canlı TMDB verisi var; ses tarayıcının kendi Web Speech motoru; atlanabilir ve reduced-motion'a uyuyor." | Yaratıcılık / ekstra (%30) |
+| 0:00–0:25 | `/` ilk giriş | **Boot Sequence**: INITIALIZE → 2–3 sahne izlet → **Esc** ile geç. "Sahnelerde sitenin gerçek component'leri ve canlı TMDB verisi var; anlatım kayıtlı ses (ElevenLabs), dosya çalmazsa tarayıcı sesine ve altyazıya düşüyor; atlanabilir ve reduced-motion'a uyuyor." | Yaratıcılık / ekstra (%30) |
 | 0:25–0:50 | Command Center | Temayı bir cümleyle anlat. Üst şerit: **TMDB ● ONLINE** ve **407 films / 124 series** — "uydurma değil, discover'ın `total_results` değeri." Bölüm kartları. | Home page: tema tanıtımı + bölümlere linkler; API entegrasyonu |
 | 0:50–1:40 | `/movies` | **Subclass**'tan CYBORG'u kapat → sayı anında değişir. Genre / decade / sort seç. **Adres çubuğunu göster** (filtreler URL'de) → geri tuşu çalışır. Aşağı kaydır → **Load more**. Arama kutusuna "Interstellar" yaz → TMDB'nin tamamında arar; arşivde yüklü olanlarda *In archive* rozeti çıkar. Kısaca `/series` ve `/cast`'e geç ("3. liste: oyuncular, archive yapımlarının credits'inden derleniyor"). | 3 listeleme sayfası, pagination/Load more, reaktif arama + filtre, URL state |
 | 1:40–2:05 | `/media/movie/62` | *2001: A Space Odyssey*'ye tıkla → **dinamik route**. Backdrop, cast (oyuncuya tıkla → `/person/:id`), fragman, recommendations ve "Archive analysis · Linked dossiers" kutusu (2001'de HAL 9000). | Dinamik detay sayfası, React Router |

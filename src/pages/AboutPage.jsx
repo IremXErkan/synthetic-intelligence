@@ -172,6 +172,8 @@ function AboutPage() {
               </Link>
               .
             </p>
+            {/* Credit for the recorded intro narration (public/narration/). */}
+            <p className="text-ink-muted">Narration voice generated with ElevenLabs.</p>
           </div>
         </HudPanel>
       </div>

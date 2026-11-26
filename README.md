@@ -63,10 +63,12 @@ Every request has a themed **skeleton loading** state, an **error** state with a
 an **empty** state. A live **TMDB link indicator** in the status bar shows whether the API answers.
 
 ### Extras
-- **Boot Sequence intro** — a ~65-second narrated tour on the first visit to `/` (direct links skip
-  it; *Replay intro* in the footer). It uses the site's real components with live TMDB data and the
-  browser's own speech engine (Web Speech API). Captions are always shown; without a voice it
-  continues silently. **Esc** skips, **Space** pauses, **M** mutes.
+- **Boot Sequence intro** — a ~75-second narrated tour on the first visit to `/` (direct links skip
+  it; *Replay intro* in the footer). It uses the site's real components with live TMDB data. The
+  narration is a recorded voice (generated with ElevenLabs, files in `public/narration/`), so
+  everyone hears the same narrator; if a file cannot play it falls back to the browser's own
+  speech engine, then to captions only. Captions are always shown. **Esc** skips, **Space**
+  pauses, **M** mutes.
 - **Archive Terminal** — a command palette opened with **Ctrl+K** (or the terminal button in the
   navbar). A fixed command set (`help`, `goto`, `search`, `open`, `dossier`, `dossiers`, `compare`,
   `stats`, `status`, `clear`, `exit`) with live, grouped suggestions, Tab completion and command
@@ -263,7 +265,7 @@ Components never call `fetch` themselves; every request goes through `src/servic
 - network graph builder
 - `useFetch` (loading, error, retry, abort) and `useArchiveQuery`
 - common components (threat badge, error state with retry, redacted text)
-- intro narration engine (voice choice, timing, pause, speech errors)
+- intro narration engine (recorded files, voice choice, timing, pause, playback errors)
 - Archive Terminal commands and suggestions (TMDB calls mocked)
 
 ```bash
