@@ -62,6 +62,12 @@ export const SCENES = [
     lines: () => ['The Intelligence Network shows how they are all connected.'],
   },
   {
+    id: 'terminal',
+    chapter: 'Terminal',
+    minMs: 7000,
+    lines: () => ['For direct access, press Control K.', 'The Archive Terminal runs your commands on live data.'],
+  },
+  {
     id: 'close',
     chapter: 'Clearance',
     final: true, // waits on ENTER ARCHIVE instead of moving on

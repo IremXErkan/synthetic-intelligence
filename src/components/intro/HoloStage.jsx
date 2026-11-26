@@ -18,6 +18,7 @@ import ArchiveScene from './scenes/ArchiveScene.jsx'
 import FilterScene from './scenes/FilterScene.jsx'
 import CastScene from './scenes/CastScene.jsx'
 import DossierScene from './scenes/DossierScene.jsx'
+import TerminalScene from './scenes/TerminalScene.jsx'
 import CloseScene from './scenes/CloseScene.jsx'
 
 // Lab (Recharts) and Network (React Flow) scenes are separate chunks; they are
@@ -37,6 +38,7 @@ const SCENE_COMPONENTS = {
   dossier: DossierScene,
   lab: LabScene,
   network: NetworkScene,
+  terminal: TerminalScene,
   close: CloseScene,
 }
 const AVAILABLE_SCENES = SCENES.filter((scene) => scene.id in SCENE_COMPONENTS)
