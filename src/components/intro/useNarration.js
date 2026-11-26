@@ -101,7 +101,7 @@ export default function useNarration({ scenes, context, paused, muted, voice }) 
     return () => {
       finished = true
       timers.forEach(clearTimeout)
-      if (SPEECH_SUPPORTED) window.speechSynthesis.cancel()
+      if (SPEECH_SUPPORTED) window.speechSynthesis?.cancel()
     }
   }, [text, key, paused, muted, voice, scene, scenes.length, position.scene, position.line])
 

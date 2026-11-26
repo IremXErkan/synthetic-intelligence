@@ -9,8 +9,10 @@ const B = getEntityBySlug('tars')
 function LabScene({ lineIndex }) {
   return (
     <div className="grid h-full content-center items-center gap-4 md:grid-cols-[1fr_1fr]">
-      <LabRadar a={A} b={B} className="max-w-64 sm:max-w-72" />
-      <div className="space-y-2" aria-hidden="true">
+      {/* Narrow screens: a smaller radar keeps its axis labels inside the panel. */}
+      <LabRadar a={A} b={B} className="max-w-52 sm:max-w-72" />
+      {/* The bars repeat the radar's numbers; on phones there is no room, so desktop only. */}
+      <div className="hidden space-y-2 md:block" aria-hidden="true">
         <p className="label-mono mb-3 text-holo">
           {A.name} <span className="text-ink">vs</span> {B.name} · editorial scores
         </p>

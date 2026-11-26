@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 
 const COLORS = {
   editorial: 'text-pulse', // editorial scores
@@ -8,9 +8,11 @@ const COLORS = {
 /**
  * Hatched score bar (default scale 1–10). Accessible as a meter, and the
  * number is always printed as text so the value never depends on bar length alone.
- * Fills once on mount; MotionConfig(reducedMotion="user") skips the animation.
+ * Fills once on mount. MotionConfig(reducedMotion="user") only skips transform
+ * animations, not `width`, so reduced motion is checked here explicitly.
  */
 function HatchedBar({ label, value, min = 1, max = 10, variant = 'editorial' }) {
+  const reduceMotion = useReducedMotion()
   const clamped = Math.min(Math.max(value, 0), max)
   const percent = `${(clamped / max) * 100}%`
   const color = COLORS[variant] ?? COLORS.editorial
@@ -29,7 +31,7 @@ function HatchedBar({ label, value, min = 1, max = 10, variant = 'editorial' }) 
       >
         <motion.div
           className={`bg-hatched h-full border-r-2 border-current ${color}`}
-          initial={{ width: 0 }}
+          initial={reduceMotion ? false : { width: 0 }}
           animate={{ width: percent }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
         />
