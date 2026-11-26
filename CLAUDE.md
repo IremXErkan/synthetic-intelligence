@@ -391,6 +391,22 @@ Gereksiz soyutlama yapma. Bir şey tek yerde kullanılıyorsa ayrı dosyaya çı
 4. Cila ve animasyonlar
 5. Network (kesilebilir)
 
+### Kapsam kararı: Archive Terminal (26.11'de eklendi)
+Kullanıcı onayıyla eklenen ekstra özellik; Network'ten sonra yapılır.
+- Komut satırı tarzı arama/gezinme paneli. **Ctrl+K** ile açılır, **Esc** ile kapanır,
+  **↑/↓** ok tuşlarıyla komut geçmişi.
+- **Sabit komut listesi** + `help` komutu. Serbest metin yorumlanmaz; bilinmeyen komut
+  "unknown command, type help" hatası verir.
+- **Yapay zekâ / LLM yok.** Sohbet botu gibi görünmez (konuşma balonu, avatar, "asistan"
+  dili yok); terminal/komut satırı görünümünde olur.
+- Veriyi mevcut `services/tmdb.js` fonksiyonlarıyla ve `entities.js` kataloğuyla alır;
+  sahte çıktı üretmez.
+
+### Özellik dondurma
+- **28.11 akşamı özellik dondurma.** Terminal o akşama kadar tam çalışır halde değilse
+  **tamamen çıkarılır**, yarım bırakılmaz.
+- **29.11:** sadece kontrol, README düzeltmeleri ve teslim; yeni özellik yok.
+
 ---
 
 ## 13. Kapsam dışı
