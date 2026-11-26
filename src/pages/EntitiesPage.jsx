@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import { getMediaDetails } from '../services/tmdb.js'
 import useFetch from '../hooks/useFetch.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import { getReleaseDate } from '../utils/media.js'
 import { ENTITIES, ENTITY_TYPES, THREAT_LEVELS } from '../data/entities.js'
 import PageShell from '../components/layout/PageShell.jsx'
@@ -70,6 +71,7 @@ function useEntityFilters() {
 }
 
 function EntitiesPage() {
+  useDocumentTitle('Intelligence Database')
   const { filters, write } = useEntityFilters()
   const productions = useFetch(fetchAllProductions)
 

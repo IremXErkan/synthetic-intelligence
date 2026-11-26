@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router'
+import { Link, useLocation } from 'react-router'
 import { Menu, X } from 'lucide-react'
 import StatusBar from './StatusBar.jsx'
 
@@ -12,21 +12,42 @@ const NAV_LINKS = [
   { to: '/about', label: 'About' },
 ]
 
-// NavLink sets aria-current="page" on the active link automatically;
-// the active style is a visible underline + color, not color alone.
-const desktopLinkClass = ({ isActive }) =>
+// Detail pages belong to a section, so the navbar still shows where you are.
+const SECTION_PREFIXES = [
+  ['/media/movie/', '/movies'],
+  ['/media/tv/', '/series'],
+  ['/person/', '/cast'],
+  ['/entity/', '/entities'],
+]
+
+/**
+ * 'page'    → this link is the current page (aria-current="page")
+ * 'section' → a detail page inside this link's section (aria-current="true")
+ * null      → not active
+ */
+function getLinkState(pathname, to) {
+  if (pathname === to) return 'page'
+  const section = SECTION_PREFIXES.find(([prefix]) => pathname.startsWith(prefix))?.[1]
+  return section === to ? 'section' : null
+}
+
+// Active style is an underline + color (not color alone); same look for page and section.
+const desktopLinkClass = (active) =>
   `label-mono relative py-2 transition-colors ${
-    isActive
+    active
       ? 'text-signal after:absolute after:inset-x-0 after:-bottom-px after:h-0.5 after:bg-signal'
       : 'text-ink-muted hover:text-ink'
   }`
 
-const mobileLinkClass = ({ isActive }) =>
+const mobileLinkClass = (active) =>
   `label-mono block border-l-2 px-4 py-3 ${
-    isActive ? 'border-signal bg-signal/10 text-signal' : 'border-transparent text-ink-muted hover:text-ink'
+    active ? 'border-signal bg-signal/10 text-signal' : 'border-transparent text-ink-muted hover:text-ink'
   }`
 
+const ariaCurrent = (state) => (state === 'page' ? 'page' : state === 'section' ? 'true' : undefined)
+
 function Navbar() {
+  const { pathname } = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
   const closeMenu = () => setMenuOpen(false)
 
@@ -58,13 +79,16 @@ function Navbar() {
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-6 md:flex">
-          {NAV_LINKS.map((link) => (
-            <li key={link.to}>
-              <NavLink to={link.to} className={desktopLinkClass}>
-                {link.label}
-              </NavLink>
-            </li>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const state = getLinkState(pathname, link.to)
+            return (
+              <li key={link.to}>
+                <Link to={link.to} className={desktopLinkClass(state)} aria-current={ariaCurrent(state)}>
+                  {link.label}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
 
         {/* Mobile toggle */}
@@ -84,13 +108,16 @@ function Navbar() {
 
       {menuOpen && (
         <ul id="mobile-menu" className="border-t border-line bg-panel py-2 md:hidden">
-          {NAV_LINKS.map((link) => (
-            <li key={link.to}>
-              <NavLink to={link.to} className={mobileLinkClass} onClick={closeMenu}>
-                {link.label}
-              </NavLink>
-            </li>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const state = getLinkState(pathname, link.to)
+            return (
+              <li key={link.to}>
+                <Link to={link.to} className={mobileLinkClass(state)} aria-current={ariaCurrent(state)} onClick={closeMenu}>
+                  {link.label}
+                </Link>
+              </li>
+            )
+          })}
         </ul>
       )}
     </header>

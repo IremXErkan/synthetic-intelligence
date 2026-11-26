@@ -1,8 +1,8 @@
 import { Link } from 'react-router'
 
-// Official TMDB logo (Alt short, blue), linked from TMDB's logos & attribution page.
-const TMDB_LOGO_URL =
-  'https://www.themoviedb.org/assets/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg'
+// Official TMDB logo ("Alt short", blue) from TMDB's logos & attribution page,
+// stored in /public so it is served by this site (no hotlinking).
+const TMDB_LOGO_URL = '/tmdb-logo.svg'
 
 function Footer() {
   return (

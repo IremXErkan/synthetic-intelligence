@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { ENTITIES } from '../data/entities.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import HudPanel from '../components/common/HudPanel.jsx'
 import HeroEntity from '../components/home/HeroEntity.jsx'
 import LatestFeed from '../components/home/LatestFeed.jsx'
@@ -16,6 +17,7 @@ function randomIndex(exclude) {
 
 /** Command Center: the dashboard landing page. */
 function HomePage() {
+  useDocumentTitle('Command Center')
   // A different featured entity on every visit; "Scan another" picks a new one.
   const [heroIndex, setHeroIndex] = useState(() => randomIndex(-1))
 

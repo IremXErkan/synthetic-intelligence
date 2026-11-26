@@ -3,6 +3,7 @@ import { Globe } from 'lucide-react'
 import { discoverTheme, isInArchive, searchMedia } from '../../services/tmdb.js'
 import useFetch from '../../hooks/useFetch.js'
 import useArchiveQuery from '../../hooks/useArchiveQuery.js'
+import useDocumentTitle from '../../hooks/useDocumentTitle.js'
 import { buildArchiveQuery } from '../../config/archiveFilters.js'
 import PageShell from '../layout/PageShell.jsx'
 import HudPanel from '../common/HudPanel.jsx'
@@ -59,6 +60,7 @@ function ExtraPage({ page, fetchPage, mediaType, searching }) {
 function MediaArchive({ mediaType, code, eyebrow, title, description, unitLabel }) {
   const { state, setFilter, setQuery, resetFilters, isFiltered } = useArchiveQuery(mediaType)
   const searching = state.q.length >= MIN_QUERY_LENGTH
+  useDocumentTitle(searching ? `“${state.q}” · ${title}` : title)
 
   const archiveQuery = useMemo(() => buildArchiveQuery(mediaType, state), [mediaType, state])
   const queryKey = searching ? `search:${state.q}` : `archive:${JSON.stringify(archiveQuery)}`

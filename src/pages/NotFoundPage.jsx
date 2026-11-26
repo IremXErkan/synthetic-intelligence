@@ -2,10 +2,15 @@ import { Link, useLocation } from 'react-router'
 import { FileX2 } from 'lucide-react'
 import HudPanel from '../components/common/HudPanel.jsx'
 import { DataList, DataRow } from '../components/common/DataRow.jsx'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 
 /** Themed 404 for unknown routes (and later for invalid detail IDs). */
+// "Title not found" → "Title Not Found" for the browser tab.
+const toTitleCase = (text) => text.replace(/\b\w/g, (letter) => letter.toUpperCase())
+
 function NotFoundPage({ title = 'File not found', message }) {
   const { pathname } = useLocation()
+  useDocumentTitle(toTitleCase(title))
 
   return (
     <div className="mx-auto flex max-w-7xl justify-center px-4 py-16 sm:px-6">

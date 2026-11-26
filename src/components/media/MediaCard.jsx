@@ -44,7 +44,7 @@ function MediaCard({ item, mediaType, inArchive = false }) {
             )}
           </p>
           {item.overview && <p className="mt-2 line-clamp-2 text-xs text-ink-muted">{item.overview}</p>}
-          <p className="label-mono mt-auto pt-3 text-[0.6875rem] text-ink-muted/80">TMDB #{item.id}</p>
+          <p className="label-mono mt-auto pt-3 text-[0.6875rem] text-ink-muted">TMDB #{item.id}</p>
         </div>
       </HudPanel>
     </Link>

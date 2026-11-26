@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router'
 import { Info } from 'lucide-react'
 import { getPerson, isInArchive } from '../services/tmdb.js'
 import useFetch from '../hooks/useFetch.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import { imageUrl, IMAGE_SIZES } from '../utils/imageUrl.js'
 import { formatDate, getReleaseDate, getTitle, getYear } from '../utils/media.js'
 import { getSyntheticReason } from '../utils/castCompiler.js'
@@ -68,6 +69,7 @@ function PersonSkeleton() {
 function PersonDetail({ id }) {
   const fetcher = useCallback((signal) => getPerson(id, { append: 'combined_credits' }, { signal }), [id])
   const { data, error, loading, retry } = useFetch(fetcher)
+  useDocumentTitle(loading ? null : error ? (error.status === 404 ? null : 'Signal Lost') : data.name)
   const [bioExpanded, setBioExpanded] = useState(false)
   const [showAllCredits, setShowAllCredits] = useState(false)
 

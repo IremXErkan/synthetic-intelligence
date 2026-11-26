@@ -50,7 +50,7 @@ function SearchBar({ value, onSearch, label, placeholder, delay = 350 }) {
           onChange={(event) => setText(event.target.value)}
           placeholder={placeholder}
           autoComplete="off"
-          className="w-full border border-line-strong bg-void py-2.5 pl-9 pr-10 text-sm text-ink placeholder:text-ink-muted/70 focus:border-signal [&::-webkit-search-cancel-button]:hidden"
+          className="w-full border border-line-strong bg-void py-2.5 pl-9 pr-10 text-sm text-ink placeholder:text-ink-muted focus:border-signal [&::-webkit-search-cancel-button]:hidden"
         />
         {text && (
           <button

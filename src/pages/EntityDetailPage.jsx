@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, FlaskConical } from 'lucide-react'
 import { getMediaDetails, getPerson } from '../services/tmdb.js'
 import useFetch from '../hooks/useFetch.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import { imageUrl, IMAGE_SIZES } from '../utils/imageUrl.js'
 import { formatDate, getReleaseDate, getTitle, getYear } from '../utils/media.js'
 import { ENTITY_TYPES, getEntityBySlug, getEntityCode } from '../data/entities.js'
@@ -15,6 +16,7 @@ import { SkeletonBlock } from '../components/common/Skeleton.jsx'
 import MediaCard from '../components/media/MediaCard.jsx'
 import DossierPortrait from '../components/entity/DossierPortrait.jsx'
 import ScoreBars from '../components/entity/ScoreBars.jsx'
+import { RedactedText } from '../components/common/Redacted.jsx'
 import NotFoundPage from './NotFoundPage.jsx'
 
 const CREDITS_APPEND = { movie: 'credits', tv: 'aggregate_credits' }
@@ -58,6 +60,7 @@ function Dossier({ entity }) {
     [entity],
   )
   const { data, error, loading, retry } = useFetch(fetcher)
+  useDocumentTitle(error ? 'Signal Lost' : `${entity.name} · Classified Dossier`)
 
   if (loading) return <DossierSkeleton />
   if (error) {
@@ -218,6 +221,16 @@ function Dossier({ entity }) {
         {/* Analyst notes (editorial) */}
         <HudPanel variant="editorial" title="Analyst notes" brackets bodyClassName="space-y-6 p-6">
           <p className="leading-relaxed text-ink">{entity.summary}</p>
+
+          {entity.addendum && (
+            <div>
+              <h3 className="label-mono mb-2 text-pulse">Addendum</h3>
+              <p className="leading-relaxed text-ink">
+                <RedactedText text={entity.addendum} />
+              </p>
+              <p className="mt-1 text-xs text-ink-muted">Select a [CLASSIFIED] passage to declassify it.</p>
+            </div>
+          )}
 
           <div>
             <h3 className="label-mono mb-2 text-pulse">Observed capabilities</h3>

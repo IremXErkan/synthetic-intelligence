@@ -39,7 +39,7 @@ function ArchiveSearch() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="e.g. Blade Runner"
-            className="w-full border border-line-strong bg-void py-2 pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted/70 focus:border-signal"
+            className="w-full border border-line-strong bg-void py-2 pl-9 pr-3 text-sm text-ink placeholder:text-ink-muted focus:border-signal"
           />
         </div>
         <div className="flex gap-2">

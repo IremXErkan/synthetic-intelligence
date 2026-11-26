@@ -4,6 +4,7 @@ import { ArrowLeftRight, Info } from 'lucide-react'
 import { useReducedMotion } from 'framer-motion'
 import { PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart, ResponsiveContainer } from 'recharts'
 import { ENTITIES, SCORE_CRITERIA, getEntityBySlug } from '../data/entities.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import PageShell from '../components/layout/PageShell.jsx'
 import HudPanel from '../components/common/HudPanel.jsx'
 import HudRings from '../components/common/HudRings.jsx'
@@ -58,6 +59,7 @@ function LabPage() {
   const { a, b, setPair } = useLabPair()
   const reduceMotion = useReducedMotion() // Recharts does not read the OS setting itself
   const pairKey = `${a.slug}|${b.slug}`
+  useDocumentTitle(`${a.name} vs ${b.name} · Comparison Lab`)
 
   // "ANALYZING…" → "ANALYSIS COMPLETE" after a short beat whenever the pair changes.
   const [completedKey, setCompletedKey] = useState(null)

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router'
 import { PlayCircle, Star } from 'lucide-react'
 import { MEDIA_TYPES, getMediaDetails } from '../services/tmdb.js'
 import useFetch from '../hooks/useFetch.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import { imageUrl, IMAGE_SIZES } from '../utils/imageUrl.js'
 import { formatDate, getReleaseDate, getTitle, getYear } from '../utils/media.js'
 import { THEME_GROUPS, getThemeGroupsForKeywords } from '../config/themeKeywords.js'
@@ -63,6 +64,8 @@ function DetailSkeleton() {
 function MediaDetail({ type, id }) {
   const fetcher = useCallback((signal) => getMediaDetails(type, id, { append: APPEND[type] }, { signal }), [type, id])
   const { data, error, loading, retry } = useFetch(fetcher)
+  // 404s get their title from NotFoundPage; null leaves the title as is.
+  useDocumentTitle(loading ? null : error ? (error.status === 404 ? null : 'Signal Lost') : getTitle(data))
 
   if (loading) return <DetailSkeleton />
   if (error?.status === 404) {

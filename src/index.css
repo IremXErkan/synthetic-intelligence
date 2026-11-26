@@ -54,6 +54,16 @@
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-signal;
   }
+
+  /*
+   * Chamfered controls: clip-path would cut an outside outline, so the ring is
+   * drawn inside instead. The inset is (cut / 2 + 3px) so the ring's corners stay
+   * inside the cut diagonals and remain fully visible.
+   */
+  .chamfer:focus-visible {
+    outline-width: 2px;
+    outline-offset: calc(-1 * (var(--cut) / 2 + 3px));
+  }
 }
 
 /* Faint blueprint grid used behind hero areas. Pure CSS, no image asset. */

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router'
 import { Info } from 'lucide-react'
 import { fetchCastBatch } from '../services/cast.js'
 import useFetch from '../hooks/useFetch.js'
+import useDocumentTitle from '../hooks/useDocumentTitle.js'
 import { compileCast, filterCast, TOP_BILLED } from '../utils/castCompiler.js'
 import PageShell from '../components/layout/PageShell.jsx'
 import HudPanel from '../components/common/HudPanel.jsx'
@@ -52,6 +53,7 @@ function ProgressNote({ progress }) {
 }
 
 function CastPage() {
+  useDocumentTitle('Cast Registry')
   const { filters, write } = useCastFilters()
   const [progress, setProgress] = useState(null)
 
