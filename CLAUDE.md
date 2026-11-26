@@ -390,7 +390,7 @@ Gereksiz soyutlama yapma. Bir şey tek yerde kullanılıyorsa ayrı dosyaya çı
 3. Comparison Lab
 4. Cila ve animasyonlar
 5. Network (kesilebilir) — tamamlandı
-6. Boot Sequence intro (26.11'de eklendi)
+6. Boot Sequence intro (26.11'de eklendi) — tamamlandı (A, B, C aşamaları; 26.11)
 7. Archive Terminal — **opsiyonel**, sadece intro tamamen bittikten sonra ve zaman kalırsa
 
 ### Kapsam kararı: Boot Sequence intro (26.11'de eklendi)
@@ -418,6 +418,36 @@ Sadece intro tamamen bittikten sonra ve zaman kalırsa yapılır.
   dili yok); terminal/komut satırı görünümünde olur.
 - Veriyi mevcut `services/tmdb.js` fonksiyonlarıyla ve `entities.js` kataloğuyla alır;
   sahte çıktı üretmez.
+
+### Archive Terminal planı — opsiyonel — intro bittikten sonra
+Kullanıcı 26.11'de bu planı olduğu gibi onayladı (Tab tamamlama ve Navbar butonu dahil).
+Uygulamaya ancak kullanıcı "başla" dediğinde geçilir. 28.11 öğlen kuralı geçerli.
+
+| Komut | Ne yapar | Veri kaynağı |
+|---|---|---|
+| `help` | Komut listesi + kısa açıklama | sabit |
+| `goto <section>` | `home`, `movies`, `series`, `cast`, `entities`, `lab`, `network`, `about` sayfasına gider | router |
+| `search movie <query>` | İlk 5 film sonucu, yıl + "In archive" işareti | TMDB `/search/movie` |
+| `search tv <query>` | İlk 5 dizi sonucu, aynı biçim | TMDB `/search/tv` |
+| `open <n>` | Son çıktıdaki n'inci sonucu açar | son çıktı |
+| `dossier <slug>` | Dossier özeti (tür, tehdit, yapım); editoryal olarak etiketli | `entities.js` |
+| `dossiers` | 10 dossier'i slug'larıyla listeler | `entities.js` |
+| `compare <a> <b>` | `/lab?a=…&b=…` adresine gider | router |
+| `stats` | Arşivdeki film / dizi sayısı | discover `total_results` |
+| `status` | TMDB bağlantı durumu | `getConnectionStatus` |
+| `clear` | Ekranı temizler | — |
+| `exit` | Kapatır (Esc ile aynı) | — |
+
+- Hatalar: bilinmeyen komut → `unknown command: x — type help`; yanlış slug →
+  `entity not found`; sonuç yok → `no records found`; API hatası → `ERROR …` satırı.
+- **Tab** slug ve bölüm adlarını tamamlar.
+- **Ctrl+K** aç/kapat, **Esc** kapat, **↑/↓** oturum içi komut geçmişi.
+- Görünüm: HUD tarzı monospace panel, `ARCHIVE://` prompt'u, tek giriş satırı.
+- Erişilebilirlik: `dialog` + focus trap, çıktı `aria-live`; intro açıkken Ctrl+K çalışmaz.
+- Navbar'da küçük bir **Ctrl+K** butonu (mobilde de açılabilsin diye).
+- Dosyalar: yeni `src/components/terminal/ArchiveTerminal.jsx`, `commands.js`,
+  `commands.test.js`; değişen `src/App.jsx` (kısayol + `React.lazy`),
+  `src/components/layout/Navbar.jsx` (buton).
 
 ### Özellik dondurma
 - **28.11 öğlen:** Terminal o saate kadar tam çalışır halde değilse **tamamen çıkarılır**,
