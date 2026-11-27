@@ -1,233 +1,143 @@
 # Synthetic Intelligence — Fictional AI & Robotics Archive
 
-An interactive wiki of the artificial intelligences, androids and robots of film and television,
-styled as the archive terminal of a classified research institute.
+An interactive wiki of the artificial intelligences, androids and robots of film and television.
 
-**Live site:** https://synthetic-intelligence-khaki.vercel.app/
-**Repository:** https://github.com/IremXErkan/synthetic-intelligence
+**▶ Live site: [synthetic-intelligence-khaki.vercel.app](https://synthetic-intelligence-khaki.vercel.app/)**
+**⌥ Repository: [github.com/IremXErkan/synthetic-intelligence](https://github.com/IremXErkan/synthetic-intelligence)**
 
-SE 3355 Web Programming — Midterm Project. Built with **React** and **Tailwind CSS** on top of the
-public **TMDB API**.
-
-![Command Center — home page](docs/screenshots/home.png)
+![Command Center — the home page](docs/screenshots/home.jpg)
 
 ---
 
-## The idea in one sentence
+## About
 
-**Every film, series and person on the site comes live from TMDB; the project adds a clearly
-labelled editorial analysis layer on top of it.**
+The assignment allows a wiki about "a specific movie/game/series universe, collection, **or theme**".
+This project takes the theme route: instead of one franchise, it collects fictional synthetic minds
+from across cinema and TV — HAL 9000, TARS, Ava, Data, Skynet and hundreds of productions around
+them. The archive is built from TMDB keyword searches, so it holds hundreds of real titles rather
+than a hand-picked list. The site is styled as the terminal of a classified research archive:
+dark HUD panels, live status readouts and "classified" dossiers. All film, series and person data is
+loaded live from TMDB; a small, clearly labelled editorial layer adds analysis on top.
 
-This is a *theme* wiki (the assignment allows "a universe, collection or theme"): instead of a fixed
-list, the archive is built from TMDB keywords, so it contains hundreds of real titles — at the time
-of writing **407 films and 124 series** (the numbers on the site are always the live
-`total_results` from TMDB, never hard-coded).
+---
+
+## Try these (2-minute tour)
+
+- **Replay the intro** — open the [live site](https://synthetic-intelligence-khaki.vercel.app/) and
+  press **Replay intro** in the footer. A narrated tour with sound (~75 s) built from the site's real
+  components; **SKIP INTRO** or **Esc** skips it.
+- **Open the Archive Terminal** — press **Ctrl+K** on any page (or the terminal button in the navbar)
+  and try: `help` · `search movie ex machina` · `open 1` · `compare hal-9000 tars` · `stats`
+- **Read a Classified Dossier** — [/entity/hal-9000](https://synthetic-intelligence-khaki.vercel.app/entity/hal-9000);
+  in *Analyst notes*, click a **[CLASSIFIED]** passage to declassify it.
+- **Compare two minds** — [/lab?a=hal-9000&b=tars](https://synthetic-intelligence-khaki.vercel.app/lab?a=hal-9000&b=tars)
+- **Explore the network** — [/network](https://synthetic-intelligence-khaki.vercel.app/network);
+  click a node, double-click to open its page.
+- **Filter the archive** — [/movies?groups=android,cyborg&decade=1980&sort=rating](https://synthetic-intelligence-khaki.vercel.app/movies?groups=android,cyborg&decade=1980&sort=rating):
+  change any filter and watch the URL update; the link can be shared and the back button works.
+
+---
+
+## Assignment requirements → where they are met
+
+| Requirement | Where |
+|---|---|
+| React, function components + hooks only | All of `src/` (no class components); custom hooks in `src/hooks/` |
+| Styling with Tailwind CSS only | Tailwind 4 utilities + theme tokens in `src/index.css`; no UI kit or template |
+| Public API, requests with `fetch` | TMDB API v3 — every request goes through `src/services/tmdb.js` |
+| Loading and error states | Themed skeletons (`Skeleton.jsx`), `ErrorState.jsx` with a **Retry** button, `EmptyState.jsx` — on every list and detail page |
+| Home page introducing the theme, links to sections | [`/`](https://synthetic-intelligence-khaki.vercel.app/) — `src/pages/HomePage.jsx` |
+| At least 3 listing pages with pagination / Load more | [`/movies`](https://synthetic-intelligence-khaki.vercel.app/movies), [`/series`](https://synthetic-intelligence-khaki.vercel.app/series) (`MediaArchive.jsx`), [`/cast`](https://synthetic-intelligence-khaki.vercel.app/cast) (`CastPage.jsx`) — all with **Load more** |
+| Detail page with a dynamic route | `/media/:type/:id`, `/person/:id`, `/entity/:slug` — routes in `src/App.jsx` |
+| Search and/or filter that react to input | Debounced search + subclass, genre, decade, sort on `/movies` and `/series`; name, media type and *synthetic characters* filters on `/cast`; search, type, medium, sort on `/entities` |
+| Navbar + client-side routing | `src/components/layout/Navbar.jsx`, React Router in `src/App.jsx` |
+| Responsive | Usable from 375 px; hamburger menu and full-screen terminal on phones |
+| Separation of concerns | `services/` (API), `components/` (UI), `components/layout/` (Navbar, Footer), `pages/`, `hooks/` |
 
 ---
 
 ## Features
 
-### Pages
+### Core
+- **Command Center** home page with live archive counts, latest titles and a featured dossier.
+- **Movies and Series** archives: debounced search, subclass (AI / Robot / Android / Cyborg), genre, decade and sort filters.
+- **All filter and search state in the URL** — shareable links, working back button.
+- **Cast Registry** compiled from the archive's credits, one card per actor with all their roles.
+- **Detail pages** for films, series and people: backdrop, cast, trailer, recommendations, filmography.
+- **Loading, error (with Retry) and empty states** on every request, plus a themed 404.
+- **Responsive layout** from 375 px phones to wide desktops.
 
-| Route | Page | Data |
-|---|---|---|
-| `/` | **Command Center** — theme intro, global search, featured dossier, latest titles, live archive counts, section cards | TMDB + editorial |
-| `/movies` | **Cinematic Archive — Movies** (list 1) | TMDB |
-| `/series` | **Cinematic Archive — Series** (list 2) | TMDB |
-| `/cast` | **Cast Registry** (list 3) — actors and voice actors compiled from the archive's credits | TMDB |
-| `/entities` | **Intelligence Database** — the dossier catalog | editorial + TMDB |
-| `/media/:type/:id` | **Media Detail** — backdrop, poster, facts, cast, trailer, related dossiers, recommendations | TMDB |
-| `/person/:id` | **Person Detail** — profile, biography, archive roles highlighted in the filmography | TMDB |
-| `/entity/:slug` | **Classified Dossier** — live production record + labelled archive analysis | TMDB + editorial |
-| `/lab` | **Comparison Lab** — two entities side by side, radar chart and score bars | editorial + TMDB |
-| `/network` | **Intelligence Network** — graph of entities, productions and their relations | editorial + TMDB |
-| `/about` | Methodology, data sources, TMDB attribution | — |
-| `*` | Themed 404 — "File not found" (also used for invalid IDs, slugs and media types) | — |
-
-### Lists, search and filters
-- **Theme lists from the API:** `/discover/movie` and `/discover/tv` with 17 verified keyword IDs in
-  four groups (AI, Robot, Android, Cyborg) combined with OR.
-- **Search** (debounced) switches to TMDB's `/search` endpoints and marks results that are part of
-  the loaded archive with an *In archive* badge.
-- **Filters:** subclass (each keyword group can be switched off), genre, decade, sort order
-  (popularity, rating, release date) and an option to include low-vote titles.
-- **All filter and search state lives in the URL** (`useSearchParams`): links are shareable and the
-  back button works.
-- **Load more** on all three API lists.
-- **Cast Registry:** credits of each loaded production are fetched in parallel (cached), merged, and
-  the same actor appears once with all of their roles. A *Probable synthetic characters only* toggle
-  is a heuristic filter, and the page says so.
-
-### States
-Every request has a themed **skeleton loading** state, an **error** state with a *Retry* button and
-an **empty** state. A live **TMDB link indicator** in the status bar shows whether the API answers.
-
-### Extras
-- **Boot Sequence intro** — a ~75-second narrated tour on the first visit to `/` (direct links skip
-  it; *Replay intro* in the footer). It uses the site's real components with live TMDB data. The
-  narration is a recorded voice (generated with ElevenLabs, files in `public/narration/`), so
-  everyone hears the same narrator; if a file cannot play it falls back to the browser's own
-  speech engine, then to captions only. Captions are always shown. **Esc** skips, **Space**
-  pauses, **M** mutes.
-- **Archive Terminal** — a command palette opened with **Ctrl+K** (or the terminal button in the
-  navbar). A fixed command set (`help`, `goto`, `search`, `open`, `dossier`, `dossiers`, `compare`,
-  `stats`, `status`, `clear`, `exit`) with live, grouped suggestions, Tab completion and command
-  history. No AI: unknown input simply returns `unknown command — type help`.
-- **Comparison Lab** with a Recharts radar chart; the URL keeps the selection
-  (`/lab?a=hal-9000&b=tars`).
-- **Intelligence Network** built with React Flow; solid edges are TMDB links, dashed edges are
-  editorial relations, and a legend explains both.
-- **Responsive** down to 375 px (hamburger menu, full-screen terminal on phones).
-- **Accessible:** semantic HTML, visible focus, skip link, keyboard navigation, focus trapping in
-  dialogs, `aria-live` updates, threat levels shown with text and icon (never colour alone), and
-  `prefers-reduced-motion` respected everywhere.
+### Beyond the requirements
+- **Boot Sequence intro** — a narrated, captioned tour (~75 s) with live data; skippable, replayable.
+- **Archive Terminal** (Ctrl+K) — a command palette with live suggestions, Tab completion and history; no AI.
+- **Classified Dossiers** for 10 entities, combining a live TMDB record with labelled analysis.
+- **Comparison Lab** — radar chart and score bars for any two entities (Recharts).
+- **Intelligence Network** — interactive graph of entities and productions (React Flow).
+- **Live status bar** — real TMDB connection state and archive counts on every page.
+- **Accessibility and reduced-motion support** throughout (see [Quality](#quality)).
+- **79 automated tests** (Vitest + Testing Library).
 
 ---
 
-## Two data layers
+## Data & methodology
 
-| | TMDB layer | Editorial layer |
-|---|---|---|
-| **What** | Films, series, people, posters, backdrops, dates, genres, credits, trailers, recommendations | Entity type, capabilities, threat level, 1–10 comparison scores, relations between entities |
-| **Where** | Fetched live through `src/services/tmdb.js` | `src/data/entities.js` — 10 hand-written dossiers |
-| **In the UI** | Labelled "live from TMDB" | Always in a separate, purple box labelled **Archive Analysis / Editorial Classification** |
+- **Two layers, never mixed.** Films, series, people, images, dates, cast and recommendations come
+  **live from TMDB**. The **editorial layer** (`src/data/entities.js`: entity type, capabilities,
+  threat level, 1–10 scores, relations) is written by hand and stores only TMDB IDs.
+- **Colour tells them apart.** Cyan-blue marks TMDB data, purple marks *Archive Analysis /
+  Editorial Classification* — always in a separate, labelled box.
+- **The theme comes from the API.** 17 TMDB keyword IDs in four groups (AI, Robot, Android, Cyborg),
+  each verified with real requests, combined with OR. A **minimum of 50 votes** reduces noise
+  (switchable in the filters); the series list excludes TMDB's *Kids* genre.
+- **Cast "synthetic characters" filter is a heuristic** (character names containing words such as
+  *robot*, *android*, *cyborg*, *AI* or *computer*, or a match with a catalog entity) — the page says so.
+- **Scores are subjective** editorial judgements, not measurements — stated in the Lab and on About.
+- **No fake data:** if a request fails, the page shows an error with Retry instead of placeholder content.
 
-Rules the project follows:
-- The editorial catalog stores **only TMDB IDs** and analysis fields. Titles, images, years and
-  actors of a dossier are always loaded live from TMDB.
-- Every TMDB ID and credited character name in the catalog was checked against the API.
-- Scores are a **subjective project assessment**, not a measurement; the Lab and About pages say so.
-- No fake data: if a request fails, the page shows an error state instead of placeholder content.
-
-### Why two layers
-- **TMDB has the facts but not the theme.** It knows titles, casts and release dates, but it has no
-  field such as "entity type" or "threat level", and no way to compare HAL 9000 with TARS. That
-  analysis has to be written by hand, so it lives in its own small catalog.
-- **Keeping them apart keeps the site honest.** Live data is never mixed with opinion: a reader can
-  always tell which numbers come from TMDB and which are the project's own judgement.
-- **The catalog stays small and correct.** Because it stores only IDs, nothing in it goes out of
-  date — posters, titles and cast always come from the current TMDB record.
-
-### How the theme is defined
-`src/config/themeKeywords.js` holds the keyword IDs, each one looked up with `/search/keyword` and
-checked with `/keyword/{id}` (several noisy keywords were rejected and are listed in the file).
-To reduce noise, lists use a minimum vote count of 50 (switchable in the filters), and the series
-list excludes TMDB's *Kids* genre.
-
-### TMDB API endpoints used
-
-All requests go to [TMDB API v3](https://developer.themoviedb.org/docs/getting-started) with
-`language=en-US` (and `include_adult=false` on lists); every endpoint was checked with a real request before it was used.
-
-| Endpoint | Used for |
-|---|---|
-| `GET /discover/movie`, `GET /discover/tv` | Theme lists (keyword filter, genre, decade, sort, pages), archive counts |
-| `GET /search/movie`, `GET /search/tv` | Search on the list pages (the home search box opens them) and in the terminal |
-| `GET /movie/{id}`, `GET /tv/{id}` + `append_to_response` | Detail pages: `credits` (films) / `aggregate_credits` (series — plain TV credits only cover the latest season), `videos`, `recommendations`, `keywords` |
-| `GET /movie/{id}/credits`, `GET /tv/{id}/aggregate_credits` | Cast Registry |
-| `GET /person/{id}` + `combined_credits` | Person page |
-| `GET /genre/movie/list`, `GET /genre/tv/list` | Genre filter |
-| `https://image.tmdb.org/t/p/{size}{path}` | Posters, backdrops and profile photos |
-
-`/search/keyword` and `/keyword/{id}` were used once, during development, to find and verify the
-theme keyword IDs.
+Full methodology: [About page](https://synthetic-intelligence-khaki.vercel.app/about).
 
 ---
 
 ## Screenshots
 
-| Movies — filters in the URL | Classified Dossier |
-|---|---|
-| ![Movies list with control panel](docs/screenshots/movies.png) | ![HAL 9000 dossier](docs/screenshots/dossier.png) |
+![Movies archive](docs/screenshots/movies.jpg)
+*Movies — the archive's control panel: search, subclass, genre, decade and sort, all kept in the URL.*
 
-| Comparison Lab | Intelligence Network |
-|---|---|
-| ![Comparison Lab, HAL 9000 vs TARS](docs/screenshots/lab.png) | ![Intelligence Network graph](docs/screenshots/network.png) |
+![Classified Dossier: HAL 9000](docs/screenshots/dossier.jpg)
+*Classified Dossier — live TMDB source record (cyan) and editorial classification (purple).*
 
-| Archive Terminal (Ctrl+K) | Boot Sequence intro |
-|---|---|
-| ![Archive Terminal search results](docs/screenshots/terminal.png) | ![Intro, dossier scene](docs/screenshots/intro.png) |
+![Comparison Lab: HAL 9000 vs TARS](docs/screenshots/lab.jpg)
+*Comparison Lab — two entities on five criteria; production data live from TMDB.*
 
-<img src="docs/screenshots/mobile-dossier.png" alt="Dossier page on a phone" width="300">
+![Intelligence Network graph](docs/screenshots/network.jpg)
+*Intelligence Network — solid edges are TMDB links, dashed edges are editorial relations.*
 
-### Boot Sequence intro, scene by scene
+![Boot Sequence intro, dossier scene](docs/screenshots/intro.jpg)
+*Boot Sequence intro — real site components with a recorded narrator and captions.*
 
-Ten scenes built from the site's real components and live TMDB data, with a recorded narrator and
-captions (*Replay intro* in the footer of the live site).
+![Archive Terminal search results](docs/screenshots/terminal.jpg)
+*Archive Terminal (Ctrl+K) — `search movie interstellar` with live TMDB results.*
 
-| 1 · System boot | 2 · Origin |
-|---|---|
-| ![Intro scene 1, system boot](docs/screenshots/intro-boot.png) | ![Intro scene 2, live TMDB stills in the HUD rings](docs/screenshots/intro-origin.png) |
+<img src="docs/screenshots/mobile-dossier.jpg" alt="Dossier page on a phone" width="300">
 
-| 3 · The archive (live counts) | 9 · Terminal |
-|---|---|
-| ![Intro scene 3, live archive counts and posters](docs/screenshots/intro-archive.png) | ![Intro scene 9, the Archive Terminal running a real command](docs/screenshots/intro-terminal.png) |
+*Mobile — the dossier page at phone width.*
 
 ---
 
 ## Tech stack
 
-- **React 19** (function components and hooks only) with **Vite 8**, plain JavaScript
-- **Tailwind CSS 4** — the only styling solution; no UI kit or template
-- **React Router 8** — client-side routing, code-split pages
-- **fetch** — no HTTP library
-- **Framer Motion** — short page and panel transitions
-- **Recharts** — Comparison Lab radar chart
-- **React Flow** (`@xyflow/react`) — Intelligence Network
-- **lucide-react** — icons
-- **Vitest** + **Testing Library** — tests; **ESLint** — linting
-
-No global state library: component state, props and URL query parameters are enough.
-
----
-
-## Getting started
-
-### Requirements
-- A current **Node.js** LTS release with npm (developed with Node 26)
-- A free **TMDB account** and its **API Read Access Token**
-  (themoviedb.org → Settings → API)
-
-### Setup
-
-```bash
-git clone https://github.com/IremXErkan/synthetic-intelligence.git
-cd synthetic-intelligence
-npm install
-```
-
-Create a `.env` file from the example and paste your token after the `=`:
-
-```bash
-cp .env.example .env              # macOS / Linux / Git Bash
-Copy-Item .env.example .env       # Windows PowerShell
-```
-
-```
-VITE_TMDB_READ_TOKEN=your_tmdb_read_access_token
-```
-
-Then start the dev server:
-
-```bash
-npm run dev
-```
-
-> **Note on the token:** variables prefixed with `VITE_` are bundled into the client-side JavaScript,
-> so the token is visible in the browser. That is acceptable for a course project using a free,
-> read-only TMDB token; a production app would call TMDB through its own backend.
-> `.env` is listed in `.gitignore` and is never committed.
-
-### Scripts
-
-| Command | What it does |
+| Library | Used for |
 |---|---|
-| `npm run dev` | Development server with hot reload |
-| `npm run build` | Production build into `dist/` |
-| `npm run preview` | Serves the production build locally |
-| `npm run lint` | ESLint |
-| `npm test` | Runs the test suite once |
-| `npm run test:watch` | Tests in watch mode |
+| **React 19** + **Vite 8** | UI with function components and hooks; dev server and build (plain JavaScript) |
+| **Tailwind CSS 4** | All styling, with theme tokens for colours and fonts |
+| **React Router 8** | Client-side routing, URL query state, code-split pages |
+| **fetch** | All TMDB requests (no HTTP library) |
+| **Framer Motion** | Short page, panel and intro transitions (respects reduced motion) |
+| **Recharts** | Radar chart in the Comparison Lab |
+| **React Flow** (`@xyflow/react`) | Intelligence Network graph |
+| **lucide-react** | Icons |
+| **Vitest** + **Testing Library** + **jsdom** | Tests |
+| **ESLint** | Linting (including React Hooks rules) |
 
 ---
 
@@ -236,74 +146,89 @@ npm run dev
 ```
 src/
 ├── components/
-│   ├── layout/     Navbar, Footer, StatusBar (live TMDB status and archive counts)
-│   ├── common/     HudPanel, Skeleton, ErrorState, EmptyState, SearchBar, FilterBar, Badge, Redacted, …
+│   ├── layout/     Navbar, Footer, StatusBar (live TMDB status + archive counts)
+│   ├── common/     Shared UI: HudPanel, Skeleton, ErrorState, EmptyState, SearchBar, FilterBar, Badge, …
 │   ├── home/       Command Center sections
 │   ├── media/      MediaCard, MediaArchive (shared by /movies and /series), CastList
-│   ├── entity/     EntityCard, DossierFile, ScoreBars, LabRadar, NetworkCanvas, …
+│   ├── entity/     Dossier, Lab and Network building blocks
 │   ├── person/     PersonCard
-│   ├── intro/      Boot Sequence (lazy-loaded): stage, narration, scenes
-│   └── terminal/   Archive Terminal (lazy-loaded): panel, commands
+│   ├── intro/      Boot Sequence intro (lazy-loaded): stage, narration engine, scenes
+│   └── terminal/   Archive Terminal (lazy-loaded): panel and command logic
 ├── pages/          One component per route
-├── services/       tmdb.js (all TMDB requests), catalog.js, cast.js
+├── services/       tmdb.js (every TMDB request, cache, abort), catalog.js, cast.js
 ├── hooks/          useFetch, useDebounce, useArchiveQuery, useTmdbStatus, …
-├── config/         themeKeywords.js (verified keyword IDs), archive filters
-├── data/           entities.js (editorial catalog)
-├── utils/          imageUrl, media helpers, cast compiler, network graph
+├── config/         Verified theme keyword IDs, list filter definitions
+├── data/           entities.js — the editorial catalog
+├── utils/          Image URLs, media helpers, cast compiler, network graph
 ├── App.jsx         Routes, intro and terminal
 └── main.jsx
+public/narration/   Recorded intro narration (20 MP3 files)
 ```
-
-Components never call `fetch` themselves; every request goes through `src/services/`.
-
-### Under the hood
-- **Request layer** (`services/tmdb.js`): in-memory cache of response promises (the same URL is
-  requested once, parallel identical requests are shared), at most 6 requests in flight at a time,
-  readable error messages, and a live connection status.
-- **`useFetch`** runs requests with an `AbortController`, so leaving a page or changing a filter
-  cancels the old request and never sets state after unmount.
-- **Image URLs** are built in one helper from TMDB's verified base URL and sizes; missing images get
-  a themed placeholder.
-- **Code splitting:** pages, the intro, the terminal, Recharts and React Flow are separate chunks.
 
 ---
 
-## Testing
+## Getting started
 
-75 tests in 11 files (Vitest + Testing Library, jsdom):
-
-- theme keyword filter and archive filter parsing
-- image URL and media helpers
-- cast compiler (merging and de-duplicating actors, the synthetic-character heuristic)
-- network graph builder
-- `useFetch` (loading, error, retry, abort) and `useArchiveQuery`
-- common components (threat badge, error state with retry, redacted text)
-- intro narration engine (recorded files, voice choice, timing, pause, playback errors)
-- Archive Terminal commands and suggestions (TMDB calls mocked)
+**Requirements:** Node.js **20.19+ or 22.12+** (what Vite 8 needs) and npm, plus a free TMDB account.
 
 ```bash
-npm test
+git clone https://github.com/IremXErkan/synthetic-intelligence.git
+cd synthetic-intelligence
+npm install
+cp .env.example .env              # Windows PowerShell: Copy-Item .env.example .env
 ```
 
+Open `.env` and paste your **TMDB API Read Access Token** after `VITE_TMDB_READ_TOKEN=`.
+You find it on themoviedb.org under *Settings → API* after creating a free account.
+
+```bash
+npm run dev      # development server
+npm test         # run the test suite once
+npm run build    # production build into dist/
+npm run lint     # ESLint
+```
+
+> `VITE_` variables are bundled into the client, so the token is visible in the browser. That is
+> acceptable for a course project with a free, read-only token; `.env` itself is git-ignored and was
+> never committed.
+
 ---
 
-## Deployment
+## Quality
 
-Deployed on **Vercel** from the `main` branch.
-
-- `VITE_TMDB_READ_TOKEN` is set in the Vercel project's environment variables.
-- `vercel.json` rewrites every path to `index.html`, so refreshing or opening a deep link such as
-  `/entity/hal-9000` works instead of returning 404.
+- **Tests — 79 passing in 11 files** (`npm test`):
+  narration engine (13) · terminal commands and suggestions (17) · cast compiler (10) ·
+  theme keyword filter (7) · list filters (6) · common components (5) · image URLs (5) ·
+  `useFetch` (4) · `useArchiveQuery` (4) · media helpers (4) · network graph (4).
+- **Lint:** `npm run lint` reports 0 errors and 0 warnings.
+- **Accessibility:**
+  keyboard — skip link, visible focus, focus kept inside dialogs, Esc closes them;
+  contrast — every text colour has at least **6:1** contrast on its background (WCAG AA needs 4.5:1);
+  reduced motion — animations, counters and the intro's panel effects switch off with `prefers-reduced-motion`;
+  screen readers — semantic HTML, labelled dialogs and controls, `aria-live` captions and terminal output,
+  image `alt` text, threat levels shown with text and icon, never colour alone.
+- **Responsive:** 14 routes checked at **375, 768 and 1440 px** on the live site with no horizontal overflow.
+- **Errors:** every request has an error state with Retry; invalid IDs, slugs and media types
+  (e.g. `/media/movie/abc`, `/entity/glados`) show a themed 404; the intro and terminal keep working
+  without sound or when a request fails.
 
 ---
 
-## Attribution
+## Credits
 
-<img src="public/tmdb-logo.svg" alt="TMDB logo" width="160">
+<a href="https://www.themoviedb.org/"><img src="public/tmdb-logo.svg" alt="TMDB logo" width="160"></a>
 
-This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.
-All film, series and person data and images are provided by
-[The Movie Database (TMDB)](https://www.themoviedb.org/).
+- **TMDB** — all film, series and person data and images.
+  *This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.*
+- **ElevenLabs** — the intro's narration voice.
+- **Fonts** — [Inter](https://fonts.google.com/specimen/Inter) and
+  [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) via Google Fonts.
+- **Icons** — [Lucide](https://lucide.dev/).
 
-The scope is fictional AI in **films and series** only. The dossier texts, classifications and scores
-are the project's own editorial work.
+Fictional characters and productions belong to their respective rights holders.
+
+---
+
+## Author
+
+**İrem Erkan** — SE 3355 Web Programming, Midterm Project.
