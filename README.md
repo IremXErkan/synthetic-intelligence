@@ -2,8 +2,10 @@
 
 An interactive wiki of the artificial intelligences, androids and robots of film and television.
 
-**▶ Live site: [synthetic-intelligence-khaki.vercel.app](https://synthetic-intelligence-khaki.vercel.app/)**
-**⌥ Repository: [github.com/IremXErkan/synthetic-intelligence](https://github.com/IremXErkan/synthetic-intelligence)**
+| | |
+|---|---|
+| **Live site** | **[synthetic-intelligence-khaki.vercel.app](https://synthetic-intelligence-khaki.vercel.app/)** |
+| **Repository** | [github.com/IremXErkan/synthetic-intelligence](https://github.com/IremXErkan/synthetic-intelligence) |
 
 ![Command Center — the home page](docs/screenshots/home.jpg)
 
